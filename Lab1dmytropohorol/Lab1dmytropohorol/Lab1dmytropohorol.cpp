@@ -152,7 +152,8 @@ bool PopOfStack(StackNode** TopNodePtr, char* Buffer)
 
 const void PrintStack(const StackNode* TopNode)
 {
-	while (const StackNode* CurrentNode = TopNode)
+	const StackNode* CurrentNode = TopNode;
+	while (CurrentNode)
 	{
 		std::printf(CurrentNode->Line);
 		CurrentNode = CurrentNode->Next;
