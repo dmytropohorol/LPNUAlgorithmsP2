@@ -175,7 +175,8 @@ bool NormalizeLine(char* Buffer)
 
 const void PrintStack(const StackNode* TopNode)
 {
-	while (const StackNode* CurrentNode = TopNode)
+	const StackNode* CurrentNode = TopNode;
+	while (CurrentNode)
 	{
 		std::cout << CurrentNode->Line;
 		CurrentNode = CurrentNode->Next;
@@ -200,7 +201,8 @@ void PrintAndClearStack(StackNode** TopNodePtr)
 
 void RenumberStack(StackNode* TopNode)
 {
-	for(int CurrentNumber = 1; StackNode* CurrentNode = TopNode; CurrentNumber++) //while(StackNode * CurrentNode = TopNode)
+	StackNode* CurrentNode = TopNode;
+	for (int CurrentNumber = 1; CurrentNode; CurrentNumber++)
 	{
 		char TempText[MAX_LINE_LEN];
 		std::strcpy(TempText, CurrentNode->Line);
