@@ -1,9 +1,6 @@
 #include "Lab3dmytropohorol.h"
-#include <cstdio>
-#include <cstring>
 #include <iostream>
 #include <fstream>
-#include <limits>
 
 #pragma warning( disable : 4996)
 
@@ -14,7 +11,7 @@ int Taxi::Count = 0;
 
 Taxi::Taxi()
 {
-	std::cout << "[LOG] Taxi default constructor called.\n";
+	std::cout << "[LOG] Taxi default constructor called. Current number of taxi's classes - " << ++Count << std::endl;
 
 	std::strcpy(Passenger, "Unknown");
 	Drivers = nullptr;
@@ -22,15 +19,13 @@ Taxi::Taxi()
 
 	DriversCount = 0;
 	AddressesCount = 0;
-
-	Count++;
 }
 
 Taxi::Taxi(const char* InPassenger,
 	const int* InDrivers, int InDriversCount,
 	const char (*InAddresses)[MAX_STR_LEN], int InAddressesCount)
 {
-	std::cout << "[LOG] Taxi parameterized constructor called.\n";
+	std::cout << "[LOG] Taxi parameterized constructor called. Current number of taxi's classes - " << ++Count << std::endl;
 
 	InPassenger ? std::strncpy(Passenger, InPassenger, MAX_STR_LEN - 1) : std::strcpy(Passenger, "Unknown");
 	Passenger[MAX_STR_LEN - 1] = '\0';
@@ -65,13 +60,11 @@ Taxi::Taxi(const char* InPassenger,
 		AddressesCount = 0;
 		Addresses = nullptr;
 	}
-
-	Count++;
 }
 
 Taxi::Taxi(const Taxi& Other)
 {
-	std::cout << "[LOG] Taxi copy constructor called.\n";
+	std::cout << "[LOG] Taxi copy constructor called. Current number of taxi's classes - " << ++Count << std::endl;
 
 	std::strcpy(Passenger, Other.Passenger);
 
@@ -105,25 +98,20 @@ Taxi::Taxi(const Taxi& Other)
 		Addresses = nullptr;
 		AddressesCount = 0;
 	}
-
-	Count++;
 }
 
 Taxi::~Taxi()
 {
-	std::cout << "[LOG] Taxi destructor called. Freeing memory.\n";
-
+	std::cout << "[LOG] Taxi destructor called. Current number of taxi's classes - " << --Count << "Freeing memory.\n";
 	delete[] Drivers;
 	delete[] Addresses;
-
-	Count--;
 }
 
 int Taxi::GetDriverState(int Index) const
 {
 	if (Index < 0 || Index >= DriversCount || !Drivers)
 	{
-		return -1; // invalid
+		return -1;
 	}
 	return Drivers[Index];
 }
@@ -158,8 +146,6 @@ void Taxi::SetAddress(int Index, const char* NewAddress)
 
 int Taxi::Order()
 {
-	std::cout << "[LOG] Taxi::Order() - counting free drivers.\n";
-
 	if (!Drivers)
 	{
 		return 0;
@@ -177,8 +163,6 @@ int Taxi::Order()
 
 bool Taxi::Order(const char* InAddress)
 {
-	std::cout << "[LOG] Taxi::Order(const char*).\n";
-
 	if (!Drivers || !Addresses || !InAddress || std::strlen(InAddress) == 0)
 	{
 		return false;
@@ -212,8 +196,6 @@ bool Taxi::Order(const char* InAddress)
 
 bool Taxi::Order(int DriverIndex, const char* InAddress)
 {
-	std::cout << "[LOG] Taxi::Order(int, const char*).\n";
-
 	if (!InAddress || !Drivers || !Addresses
 		|| DriverIndex < 0 || DriverIndex >= DriversCount
 		|| std::strlen(InAddress) == 0)
@@ -252,8 +234,7 @@ void Taxi::InputFromConsole()
 		<< (MAX_STR_LEN - 1) << " chars): ";
 	ReadNonEmptyString(Passenger);
 
-	std::cout << "How many drivers do you want to store? ";
-	
+	std::cout << "How many drivers do you want to store: ";
 	DriversCount = ReadStrictInt();
 	if (DriversCount < 0)
 	{
@@ -268,7 +249,7 @@ void Taxi::InputFromConsole()
 		Drivers = new int[DriversCount];
 		for (int i = 0; i < DriversCount; i++)
 		{
-			std::cout << "  Enter state for driver No." << i << " (0=FREE,1=BUSY): ";
+			std::cout << "Enter state for driver No." << i << " (0=FREE,1=BUSY): ";
 			int State = ReadStrictInt();
 			if (State != DRIVER_FREE && State != DRIVER_BUSY)
 			{
@@ -278,7 +259,7 @@ void Taxi::InputFromConsole()
 		}
 	}
 
-	std::cout << "How many addresses? ";
+	std::cout << "How many addresses: ";
 	AddressesCount = ReadStrictInt();
 	if (AddressesCount < 0)
 	{
@@ -293,7 +274,7 @@ void Taxi::InputFromConsole()
 		Addresses = new char[AddressesCount][MAX_STR_LEN];
 		for (int i = 0; i < AddressesCount; i++)
 		{
-			std::cout << "  Enter address #" << i << ": ";
+			std::cout << "Enter address #" << i << ": ";
 			ReadNonEmptyString(Addresses[i]);
 		}
 	}
@@ -308,14 +289,14 @@ void Taxi::PrintToConsole() const
 	{
 		for (int i = 0; i < DriversCount; i++)
 		{
-			std::cout << "  Driver #" << i << " => "
+			std::cout << "Driver #" << i << " => "
 				<< (Drivers[i] == DRIVER_FREE ? "FREE" : "BUSY")
 				<< "\n";
 		}
 	}
 	else
 	{
-		std::cout << "  No driver data.\n";
+		std::cout << "No driver data.\n";
 	}
 
 	std::cout << "AddressesCount: " << AddressesCount << "\n";
@@ -323,12 +304,12 @@ void Taxi::PrintToConsole() const
 	{
 		for (int i = 0; i < AddressesCount; i++)
 		{
-			std::cout << "  Address #" << i << ": " << Addresses[i] << "\n";
+			std::cout << "Address #" << i << ": " << Addresses[i] << "\n";
 		}
 	}
 	else
 	{
-		std::cout << "  No address data.\n";
+		std::cout << "No address data.\n";
 	}
 	std::cout << std::endl;
 }
@@ -600,7 +581,7 @@ void ReadNonEmptyString(char* Buffer)
 	{
 		std::cin.getline(Buffer, MAX_STR_LEN);
 		if (std::strlen(Buffer) > 0) return;
-		std::cout << "  Invalid (empty) input. Please try again: ";
+		std::cout << "Invalid (empty) input. Please try again: ";
 	}
 }
 
@@ -611,6 +592,6 @@ int ReadStrictInt()
 	{
 		std::cin.getline(Line, MAX_STR_LEN);
 		if (IsPureInteger(Line)) return std::atoi(Line);
-		std::cout << "  Invalid integer format. Please try again: ";
+		std::cout << "Invalid integer format. Please try again: ";
 	}
 }
