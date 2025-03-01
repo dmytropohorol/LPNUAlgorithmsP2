@@ -102,7 +102,7 @@ Taxi::Taxi(const Taxi& Other)
 
 Taxi::~Taxi()
 {
-	std::cout << "[LOG] Taxi destructor called. Current number of taxi's classes - " << --Count << "Freeing memory.\n";
+	std::cout << "[LOG] Taxi destructor called. Current number of taxi's classes - " << --Count << ". Freeing memory.\n";
 	delete[] Drivers;
 	delete[] Addresses;
 }
