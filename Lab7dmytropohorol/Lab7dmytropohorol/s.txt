@@ -1,0 +1,15 @@
+15: spaces
+14: of
+13:  
+12:      lot
+11: a
+10: with
+9: line
+8: skibidi
+7: seventh
+6: sixth
+5: fifth
+4: forth
+3: third
+2: second
+1: first
