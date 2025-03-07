@@ -1,0 +1,17 @@
+[2025-03-07 11:18:48] Temperature above T2 in room. Lamp OFF, water ON briefly.
+[2025-03-07 11:18:48] Water flow started.
+[2025-03-07 11:18:48] Temperature above T2 in room. Lamp OFF, water ON briefly.
+[2025-03-07 11:18:48] Water flow started.
+[2025-03-07 11:18:48] Light sensor triggered; camera on, snapshot taken.
+[2025-03-07 11:18:48] Light sensor triggered; camera on, snapshot taken.
+[2025-03-07 11:18:48] Temperature above T2 in room. Lamp OFF, water ON briefly.
+[2025-03-07 11:18:48] Water flow started.
+[2025-03-07 11:18:48] Temperature above T2 in room. Lamp OFF, water ON briefly.
+[2025-03-07 11:18:48] Water flow started.
+[2025-03-07 11:18:48] Temperature above T2 in room. Lamp OFF, water ON briefly.
+[2025-03-07 11:18:48] Water flow started.
+[2025-03-07 11:18:48] Temperature above T1 in room. Lamp ON briefly, camera snapshot.
+[2025-03-07 11:18:48] Snapshot taken.
+[2025-03-07 11:18:56] SmokeTemperatureSensor triggered extra safety procedure
+[2025-03-07 11:18:56] SmokeTemperatureSensor performed specialized check
+[2025-03-07 11:18:56] SmartLamp SmartLampX dimmed to level 50
