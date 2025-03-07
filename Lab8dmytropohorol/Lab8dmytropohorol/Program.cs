@@ -594,8 +594,6 @@ namespace BuildingSecuritySystem
 	{
 		public static void Main(string[] args)
 		{
-			Console.WriteLine("=== DEMO OF BUILDING SECURITY SYSTEM CLASSES ===");
-
 			// 1) Demonstrate default constructor
 			Building b1 = new Building();
 			b1.OutputToConsole();
@@ -624,7 +622,7 @@ namespace BuildingSecuritySystem
 			b1.WriteToFile(testFile);
 			Console.WriteLine("Wrote b1 to file.");
 
-			// We'll re-use b2 to read from that file
+			// Re-use b2 to read from that file
 			b2.ReadFromFile(testFile);
 			Console.WriteLine("Read file into b1:");
 			b2.OutputToConsole();
@@ -647,7 +645,7 @@ namespace BuildingSecuritySystem
 			r1.CheckAllSensors();
 			Console.WriteLine(r1);
 
-			// 8) Demonstrate static field & method usage
+			// 8) Demonstrate static field and method usage
 			Building.ShowBuildingCount(); // how many building objects were created
 			Building bigBuilding = new Building("Big Complex", 3, 9999);
 			bigBuilding.AutoCreateFloorsAndRooms();
