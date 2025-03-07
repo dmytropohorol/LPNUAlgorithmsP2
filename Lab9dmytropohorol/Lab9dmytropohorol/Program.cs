@@ -730,7 +730,7 @@ namespace BuildingSecuritySystem
 			r1.CheckAllSensors();
 			Console.WriteLine(r1);
 
-			// 8) Demonstrate static field & method usage
+			// 8) Demonstrate static field nd method usage
 			Building.ShowBuildingCount();
 			Building bigBuilding = new Building("Big Complex", 3, 9999); // how many building objects were created
 			bigBuilding.AutoCreateFloorsAndRooms();
