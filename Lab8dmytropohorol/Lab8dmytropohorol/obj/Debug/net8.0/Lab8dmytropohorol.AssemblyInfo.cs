@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Lab8dmytropohorol")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+705693137d13246e4c24e5b564f298114f0c607c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f46f86dd7b2ebeaffd05965104038b937d3e6453")]
 [assembly: System.Reflection.AssemblyProductAttribute("Lab8dmytropohorol")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Lab8dmytropohorol")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

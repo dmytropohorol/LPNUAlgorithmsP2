@@ -1,0 +1,16 @@
+[2025-03-07 10:58:30] Temperature above T2 in room. Lamp OFF, water ON briefly.
+[2025-03-07 10:58:30] Water flow started.
+[2025-03-07 10:58:30] Temperature above T1 in room. Lamp ON briefly, camera snapshot.
+[2025-03-07 10:58:30] Snapshot taken.
+[2025-03-07 10:58:30] Light sensor triggered; camera on, snapshot taken.
+[2025-03-07 10:58:30] Light sensor triggered; camera on, snapshot taken.
+[2025-03-07 10:58:30] Light sensor triggered; camera on, snapshot taken.
+[2025-03-07 10:58:30] Temperature above T2 in room. Lamp OFF, water ON briefly.
+[2025-03-07 10:58:30] Water flow started.
+[2025-03-07 10:58:30] Light sensor triggered; camera on, snapshot taken.
+[2025-03-07 10:58:30] Temperature above T2 in room. Lamp OFF, water ON briefly.
+[2025-03-07 10:58:30] Water flow started.
+[2025-03-07 10:58:30] Temperature above T1 in room. Lamp ON briefly, camera snapshot.
+[2025-03-07 10:58:30] Snapshot taken.
+[2025-03-07 10:58:30] Light sensor triggered; camera on, snapshot taken.
+[2025-03-07 10:58:30] Light sensor triggered; camera on, snapshot taken.
