@@ -1,0 +1,37 @@
+[2025-03-07 13:12:48] Temperature above T2 in room. Lamp OFF, water ON briefly.
+[2025-03-07 13:12:48] Water flow started.
+[2025-03-07 13:12:48] Temperature above T1 in room. Lamp ON briefly, camera snapshot.
+[2025-03-07 13:12:48] Snapshot taken.
+[2025-03-07 13:12:48] Light sensor triggered; camera on, snapshot taken.
+[2025-03-07 13:12:48] Light sensor triggered; camera on, snapshot taken.
+[2025-03-07 13:12:48] Temperature above T1 in room. Lamp ON briefly, camera snapshot.
+[2025-03-07 13:12:48] Snapshot taken.
+[2025-03-07 13:12:48] Temperature above T1 in room. Lamp ON briefly, camera snapshot.
+[2025-03-07 13:12:48] Snapshot taken.
+[2025-03-07 13:12:48] Temperature above T1 in room. Lamp ON briefly, camera snapshot.
+[2025-03-07 13:12:48] Snapshot taken.
+[2025-03-07 13:12:48] Temperature above T1 in room. Lamp ON briefly, camera snapshot.
+[2025-03-07 13:12:48] Snapshot taken.
+[2025-03-07 13:12:48] Temperature above T2 in room. Lamp OFF, water ON briefly.
+[2025-03-07 13:12:48] Water flow started.
+[2025-03-07 13:12:48] Temperature above T2 in room. Lamp OFF, water ON briefly.
+[2025-03-07 13:12:48] Water flow started.
+[2025-03-07 13:12:48] Light sensor triggered; camera on, snapshot taken.
+[2025-03-07 13:12:48] Light sensor triggered; camera on, snapshot taken.
+[2025-03-07 13:12:48] Light sensor triggered; camera on, snapshot taken.
+[2025-03-07 13:12:48] Temperature above T1 in room. Lamp ON briefly, camera snapshot.
+[2025-03-07 13:12:48] Snapshot taken.
+[2025-03-07 13:12:48] Temperature above T2 in room. Lamp OFF, water ON briefly.
+[2025-03-07 13:12:48] Water flow started.
+[2025-03-07 13:12:48] Temperature above T1 in room. Lamp ON briefly, camera snapshot.
+[2025-03-07 13:12:48] Snapshot taken.
+[2025-03-07 13:12:48] Temperature above T1 in room. Lamp ON briefly, camera snapshot.
+[2025-03-07 13:12:48] Snapshot taken.
+[2025-03-07 13:12:48] Temperature above T1 in room. Lamp ON briefly, camera snapshot.
+[2025-03-07 13:12:48] Snapshot taken.
+[2025-03-07 13:12:48] Temperature above T1 in room. Lamp ON briefly, camera snapshot.
+[2025-03-07 13:12:48] Snapshot taken.
+[2025-03-07 13:12:48] Light sensor triggered; camera on, snapshot taken.
+[2025-03-07 13:12:48] SmokeTemperatureSensor triggered extra safety procedure
+[2025-03-07 13:12:48] SmokeTemperatureSensor performed specialized check
+[2025-03-07 13:12:48] SmartLamp SmartLampX dimmed to level 50

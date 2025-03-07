@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections;
+using System.Text;
 
 namespace BuildingSecuritySystem
 {
@@ -215,6 +216,7 @@ namespace BuildingSecuritySystem
 		public int DoorsCount { get; set; }
 		public double VolumeUsage { get; set; }
 		public bool IsCorridor { get; set; }
+		public string RoomName { get; set; }
 
 		public Room()
 		{
@@ -246,6 +248,57 @@ namespace BuildingSecuritySystem
 		{
 			r.RemoveDevice(s);
 			return r;
+		}
+
+		// Consider "adding two rooms" to produce a new Room whose area is the sum, etc.
+		public static Room operator +(Room a, Room b)
+		{
+			Room combined = new Room();
+			combined.Width = a.Width + b.Width;
+			combined.Length = Math.Max(a.Length, b.Length);
+			combined.RoomName = a.RoomName + "_" + b.RoomName;
+			return combined;
+		}
+
+		public static bool operator >(Room a, Room b)
+		{
+			return a.GetArea() > b.GetArea();
+		}
+		public static bool operator <(Room a, Room b)
+		{
+			return a.GetArea() < b.GetArea();
+		}
+		public static bool operator >=(Room a, Room b)
+		{
+			return a.GetArea() >= b.GetArea();
+		}
+		public static bool operator <=(Room a, Room b)
+		{
+			return a.GetArea() <= b.GetArea();
+		}
+		public static bool operator ==(Room a, Room b)
+		{
+			// Handle nulls carefully
+			if (ReferenceEquals(a, b)) return true;
+			if (a is null || b is null) return false;
+			return a.GetArea() == b.GetArea();
+		}
+		public static bool operator !=(Room a, Room b)
+		{
+			return !(a == b);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is Room other)
+			{
+				return this.GetArea() == other.GetArea();
+			}
+			return false;
+		}
+		public override int GetHashCode()
+		{
+			return GetArea().GetHashCode();
 		}
 
 		public void AddSensor(Sensor sensor)
@@ -311,7 +364,7 @@ namespace BuildingSecuritySystem
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
-			sb.AppendLine("Room info:");
+			sb.AppendLine($"Room: {RoomName}");
 			sb.AppendLine(" Sensors:");
 			for (int i = 0; i < _sensorCount; i++)
 			{
@@ -445,6 +498,78 @@ namespace BuildingSecuritySystem
 				if (_devices[i] is T dev) return dev;
 			}
 			return null;
+		}
+	}
+
+	public class RoomCollection
+	{
+		private ArrayList _rooms = new ArrayList();             // numeric index
+		private Dictionary<string, Room> _roomsByName = new();  // associative index
+
+		public void Add(Room room)
+		{
+			if (room != null)
+			{
+				_rooms.Add(room);
+				if (!string.IsNullOrEmpty(room.RoomName))
+				{
+					_roomsByName[room.RoomName] = room;
+				}
+			}
+		}
+
+		public int Count => _rooms.Count;
+
+		// Numeric indexer
+		public Room this[int index]
+		{
+			get
+			{
+				if (index < 0 || index >= _rooms.Count) return null;
+				return (Room)_rooms[index];
+			}
+			set
+			{
+				if (index >= 0 && index < _rooms.Count)
+				{
+					_rooms[index] = value;
+					if (!string.IsNullOrEmpty(value.RoomName))
+					{
+						_roomsByName[value.RoomName] = value;
+					}
+				}
+			}
+		}
+
+		// Associative indexer
+		public Room this[string roomName]
+		{
+			get
+			{
+				if (_roomsByName.ContainsKey(roomName))
+				{
+					return _roomsByName[roomName];
+				}
+				return null;
+			}
+			set
+			{
+				_roomsByName[roomName] = value;
+				bool found = false;
+				for (int i = 0; i < _rooms.Count; i++)
+				{
+					if (_rooms[i] is Room r && r.RoomName == roomName)
+					{
+						_rooms[i] = value;
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+				{
+					_rooms.Add(value);
+				}
+			}
 		}
 	}
 
@@ -621,6 +746,7 @@ namespace BuildingSecuritySystem
 				for (int r = 1; r <= roomsCount; r++)
 				{
 					Room room = new Room();
+					room.RoomName = $"R_{i}_{r}";
 					room.Width = new Random().Next(3, 10);
 					room.Length = new Random().Next(3, 10);
 					room.DoorsCount = new Random().Next(1, 3);
@@ -715,6 +841,9 @@ namespace BuildingSecuritySystem
 
 			// 7) Demonstrate operator overloading on Room
 			Room r1 = new Room();
+			r1.RoomName = "ExampleRoom";
+			r1.Width = 5;
+			r1.Length = 6;
 			TemperatureSensor ts = new TemperatureSensor("TempSensor1", 30.0);
 			MovementSensor ms = new MovementSensor("MoveSensor1");
 			r1 = r1 + ts;
@@ -730,7 +859,7 @@ namespace BuildingSecuritySystem
 			r1.CheckAllSensors();
 			Console.WriteLine(r1);
 
-			// 8) Demonstrate static field & method usage
+			// 8) Demonstrate static field and method usage
 			Building.ShowBuildingCount();
 			Building bigBuilding = new Building("Big Complex", 3, 9999); // how many building objects were created
 			bigBuilding.AutoCreateFloorsAndRooms();
@@ -738,11 +867,47 @@ namespace BuildingSecuritySystem
 			Console.WriteLine("Simulation complete. Check SecurityLog.txt for events.");
 
 			// 9) Demonstrate interfaces and sealed
+			Console.WriteLine("\n=== Interfaces and sealed ===");
 			Sensor sealedSmokeSensor = new SmokeTemperatureSensor("SmokeSensorX", 25, 50);
 			PolymorphicSensorTest(sealedSmokeSensor);
 
 			Device sealedSmartLamp = new SmartLamp("SmartLampX");
 			PolymorphicDeviceTest(sealedSmartLamp);
+
+			// 10) Demonstrate collection
+			Console.WriteLine("\n=== Collection ===");
+			RoomCollection collection = new RoomCollection();
+
+			Room roomA = new Room() { RoomName = "A", Width = 4, Length = 4 };
+			Room roomB = new Room() { RoomName = "B", Width = 5, Length = 5 };
+			Room roomC = new Room() { RoomName = "C", Width = 3, Length = 10 };
+
+			collection.Add(roomA);
+			collection.Add(roomB);
+			collection.Add(roomC);
+
+			Console.WriteLine("Rooms in collection by numeric index:");
+			for (int i = 0; i < collection.Count; i++)
+			{
+				Console.WriteLine($" Index {i}: {collection[i].RoomName}, area = {collection[i].GetArea()}");
+			}
+
+			Console.WriteLine("Rooms in collection by associative index:");
+			Console.WriteLine($" 'A': area={collection["A"].GetArea()}");
+			Console.WriteLine($" 'B': area={collection["B"].GetArea()}");
+			Console.WriteLine($" 'C': area={collection["C"].GetArea()}");
+
+			// 11) Demonstrate arithmetic and logical operators
+			Console.WriteLine("\n=== Arithmetic and logical operators on rooms ===");
+			Room sumRoom = roomA + roomB;
+			Console.WriteLine($"SumRoom (A+B) => width={sumRoom.Width}, length={sumRoom.Length}, name={sumRoom.RoomName}");
+			Console.WriteLine($"sumRoom area={sumRoom.GetArea()} (should be area of width=4+5=9 x length=max(4,5)=5 => 45)");
+
+			bool isRoomALarger = (roomA > roomC);
+			Console.WriteLine($"Is Room A bigger than Room C? {isRoomALarger} (area A={roomA.GetArea()}, area C={roomC.GetArea()})");
+
+			bool areTheyEqual = (roomB == roomC);
+			Console.WriteLine($"Is Room B area equal to Room C area? {areTheyEqual} (B={roomB.GetArea()}, C={roomC.GetArea()})");
 
 			Console.WriteLine("\nPress any key to exit...");
 			Console.ReadKey();
