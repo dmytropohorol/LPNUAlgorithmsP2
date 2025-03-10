@@ -34,11 +34,9 @@ void PurgeStack(StackNode** TopNodePtr);
 // Print the stacks contents while popping everything out (LIFO order)
 void PrintAndClearStack(StackNode** TopNodePtr);
 
-//TODO: validate this part of code with professor
 // Renumber stack in reverse order of how they were pushed
 void RenumberStack(StackNode* TopNode);
 
-//TODO: validate this part of code with professor
 // Normalize the line by adding a newline character at the end if its missing
 bool NormalizeLine(char* Buffer);
 
