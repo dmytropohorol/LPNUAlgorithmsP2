@@ -2,6 +2,50 @@
 
 #pragma warning( disable : 4996)
 
+// Helper functions for copying arrays
+int* CopyDrivers(const int* source, int count)
+{
+	if (source && count > 0)
+	{
+		int* dest = new int[count];
+		for (int i = 0; i < count; i++)
+		{
+			dest[i] = source[i];
+		}
+		return dest;
+	}
+	return nullptr;
+}
+
+char (*CopyAddresses(const char source[][MAX_STR_LEN], int count))[MAX_STR_LEN]
+{
+	if (source && count > 0)
+	{
+		char (*dest)[MAX_STR_LEN] = new char[count][MAX_STR_LEN];
+		for (int i = 0; i < count; i++)
+		{
+			std::strncpy(dest[i], source[i], MAX_STR_LEN - 1);
+			dest[i][MAX_STR_LEN - 1] = '\0';
+		}
+		return dest;
+	}
+	return nullptr;
+}
+
+void AllocateDrivers(int*& Drivers, int& Count, int NewCount)
+{
+	delete[] Drivers;
+	Drivers = nullptr;
+	Count = (NewCount > 0 ? NewCount : 0);
+	if (Count > 0)
+	{
+		Drivers = new int[Count];
+		for (int i = 0; i < Count; i++)
+			Drivers[i] = DRIVER_FREE;
+	}
+}
+
+
 int ReadStrictInt();
 void ReadNonEmptyString(char* Buffer);
 
@@ -22,61 +66,33 @@ Taxi::Taxi(const char* InPassenger,
 	const char (*InAddresses)[MAX_STR_LEN], int InAddressesCount)
 {
 	std::cout << "[LOG] Taxi parameterized constructor called. Current number of taxi's classes - " << ++Count << std::endl;
+
 	InPassenger ? std::strncpy(Passenger, InPassenger, MAX_STR_LEN - 1) : std::strcpy(Passenger, "Unknown");
 	Passenger[MAX_STR_LEN - 1] = '\0';
-	if (InDrivers && InDriversCount > 0) {
-		DriversCount = InDriversCount;
-		Drivers = new int[DriversCount];
-		for (int i = 0; i < DriversCount; i++)
-			Drivers[i] = InDrivers[i];
-	}
-	else {
-		DriversCount = 0;
-		Drivers = nullptr;
-	}
-	if (InAddresses && InAddressesCount > 0) {
-		AddressesCount = InAddressesCount;
-		Addresses = new char[AddressesCount][MAX_STR_LEN];
-		for (int i = 0; i < AddressesCount; i++) {
-			std::strncpy(Addresses[i], InAddresses[i], MAX_STR_LEN - 1);
-			Addresses[i][MAX_STR_LEN - 1] = '\0';
-		}
-	}
-	else {
-		AddressesCount = 0;
-		Addresses = nullptr;
-	}
+
+	DriversCount = (InDrivers && InDriversCount > 0) ? InDriversCount : 0;
+	Drivers = CopyDrivers(InDrivers, DriversCount);
+	AddressesCount = (InAddresses && InAddressesCount > 0) ? InAddressesCount : 0;
+	Addresses = CopyAddresses(InAddresses, AddressesCount);
 }
 
 Taxi::Taxi(const Taxi& Other)
 {
 	std::cout << "[LOG] Taxi copy constructor called. Current number of taxi's classes - " << ++Count << std::endl;
+
 	std::strcpy(Passenger, Other.Passenger);
+
 	DriversCount = Other.DriversCount;
 	AddressesCount = Other.AddressesCount;
-	if (DriversCount > 0 && Other.Drivers) {
-		Drivers = new int[DriversCount];
-		for (int i = 0; i < DriversCount; i++)
-			Drivers[i] = Other.Drivers[i];
-	}
-	else {
-		Drivers = nullptr;
-		DriversCount = 0;
-	}
-	if (AddressesCount > 0 && Other.Addresses) {
-		Addresses = new char[AddressesCount][MAX_STR_LEN];
-		for (int i = 0; i < AddressesCount; i++)
-			std::strcpy(Addresses[i], Other.Addresses[i]);
-	}
-	else {
-		Addresses = nullptr;
-		AddressesCount = 0;
-	}
+
+	Drivers = CopyDrivers(Other.Drivers, DriversCount);
+	Addresses = CopyAddresses(Other.Addresses, AddressesCount);
 }
 
 Taxi::~Taxi()
 {
 	std::cout << "[LOG] Taxi destructor called. Current number of taxi's classes - " << --Count << ". Freeing memory.\n";
+
 	delete[] Drivers;
 	delete[] Addresses;
 }
@@ -171,24 +187,20 @@ void Taxi::InputFromConsole()
 	ReadNonEmptyString(Passenger);
 	std::cout << "How many drivers do you want to store: ";
 	DriversCount = ReadStrictInt();
-	if (DriversCount < 0) {
+	if (DriversCount < 0)
 		DriversCount = 0;
-	}
-	delete[] Drivers;
-	Drivers = nullptr;
-	if (DriversCount > 0) {
-		Drivers = new int[DriversCount];
-		for (int i = 0; i < DriversCount; i++) {
-			std::cout << "Enter state for driver No." << i << " (0=FREE,1=BUSY): ";
-			int State = ReadStrictInt();
-			if (State != DRIVER_FREE && State != DRIVER_BUSY)
-				State = DRIVER_FREE;
-			Drivers[i] = State;
-		}
+	AllocateDrivers(Drivers, DriversCount, DriversCount);
+	for (int i = 0; i < DriversCount; i++) {
+		std::cout << "Enter state for driver No." << i << " (0=FREE,1=BUSY): ";
+		int State = ReadStrictInt();
+		if (State != DRIVER_FREE && State != DRIVER_BUSY)
+			State = DRIVER_FREE;
+		Drivers[i] = State;
 	}
 	std::cout << "How many addresses: ";
 	AddressesCount = ReadStrictInt();
-	if (AddressesCount < 0) AddressesCount = 0;
+	if (AddressesCount < 0) 
+		AddressesCount = 0;
 	delete[] Addresses;
 	Addresses = nullptr;
 	if (AddressesCount > 0) {
@@ -224,9 +236,8 @@ void Taxi::PrintToConsole() const
 void Taxi::SaveToFile(const char* FileName) const
 {
 	std::ofstream fout(FileName);
-	if (!fout) {
+	if (!fout)
 		std::cerr << "Failed to open file for saving: " << FileName << "\n"; return;
-	}
 	fout << Passenger << "\n";
 	fout << DriversCount << "\n";
 	for (int i = 0; i < DriversCount; i++)
@@ -246,18 +257,15 @@ void Taxi::LoadFromFile(const char* FileName)
 	}
 	fin.getline(Passenger, MAX_STR_LEN);
 	fin >> DriversCount;
-	delete[] Drivers;
-	Drivers = nullptr;
-	if (DriversCount < 0) DriversCount = 0;
-	if (DriversCount > 0) {
-		Drivers = new int[DriversCount];
-		for (int i = 0; i < DriversCount; i++) {
-			int st;
-			fin >> st;
-			if (st != DRIVER_FREE && st != DRIVER_BUSY)
-				st = DRIVER_FREE;
-			Drivers[i] = st;
-		}
+	if (DriversCount < 0)
+		DriversCount = 0;
+	AllocateDrivers(Drivers, DriversCount, DriversCount);
+	for (int i = 0; i < DriversCount; i++) {
+		int st;
+		fin >> st;
+		if (st != DRIVER_FREE && st != DRIVER_BUSY)
+			st = DRIVER_FREE;
+		Drivers[i] = st;
 	}
 	fin >> AddressesCount;
 	fin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -438,15 +446,7 @@ bool Taxi::operator<(const Taxi& Other) const
 
 void Taxi::SetDriversCount(int NewCount)
 {
-	if (NewCount < 0) NewCount = 0; 
-	delete[] Drivers;
-	Drivers = nullptr;
-	if (NewCount == 0) {
-		DriversCount = 0; return;
-	}
-	DriversCount = NewCount;
-	Drivers = new int[DriversCount];
-	for (int i = 0; i < DriversCount; i++) Drivers[i] = DRIVER_FREE;
+	AllocateDrivers(Drivers, DriversCount, NewCount);
 }
 
 void Taxi::SetAddressesCount(int NewCount)
