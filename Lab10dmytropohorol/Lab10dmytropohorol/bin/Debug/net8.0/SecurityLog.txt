@@ -35,3 +35,10 @@
 [2025-03-07 13:12:48] SmokeTemperatureSensor triggered extra safety procedure
 [2025-03-07 13:12:48] SmokeTemperatureSensor performed specialized check
 [2025-03-07 13:12:48] SmartLamp SmartLampX dimmed to level 50
+[2025-03-10 20:09:44] === RANDOM FIRE GENERATION ===
+[2025-03-10 20:09:44] Temperature above T1 in Building 's1', Floor #1, Room '1', fixed by sensor 'TempSensor_1'. Lamp ON briefly, camera snapshot...
+[2025-03-10 20:09:44] Snapshot taken in Building 's1', Floor #1, Room '1'.
+[2025-03-10 20:09:48] === USER SPECIFIED FIRE GENERATION ===
+[2025-03-10 20:09:48] Temperature above T1 in Building 's1', Floor #1, Room '1', fixed by sensor 'TempSensor_1'. Lamp ON briefly, camera snapshot...
+[2025-03-10 20:09:48] Snapshot taken in Building 's1', Floor #1, Room '1'.
+[2025-03-10 20:09:48] Light sensor triggered in Building 's1', Floor #1, Room '1'; camera on, snapshot taken.
