@@ -2,90 +2,117 @@
 
 namespace BuildingSecuritySystem
 {
-	public interface ISensorInfo
+	// 1) BASE ABSTRACT CLASS FOR THE THEME
+	public abstract class SecurityItem
 	{
-		string GetSensorInfo();
+		public string Name { get; set; }
+
+		public SecurityItem()
+		{
+			Name = "UnknownItem";
+		}
+
+		public SecurityItem(string name)
+		{
+			Name = name;
+		}
+
+		public override string ToString()
+		{
+			return $"SecurityItem: {Name}";
+		}
 	}
 
-	public interface IDeviceControl
+	// 2) ABSTRACT CLASSES THAT GROUP ITEMS (SENSORS & DEVICES)
+	public abstract class Sensor : SecurityItem
 	{
-		void TurnOn();
-		void TurnOff();
-	}
-
-	public abstract class Sensor
-	{
-		public string SensorName { get; set; }
 		public bool IsTriggered { get; protected set; }
+
+		public Sensor() : base() { }
+		public Sensor(string name) : base(name) { }
 
 		public abstract void CheckSensor();
 
 		public override string ToString()
 		{
-			return $"Sensor: {SensorName}, Triggered: {IsTriggered}";
+			return $"Sensor: {Name}, Triggered: {IsTriggered}";
 		}
 	}
 
-	public abstract class Device
+	public abstract class Device : SecurityItem, IRepairable
 	{
-		public string DeviceName { get; set; }
 		public bool IsEnabled { get; protected set; }
+
+		public Device() : base() { }
+		public Device(string name) : base(name) { }
 
 		public abstract void Activate();
 		public abstract void Deactivate();
 
+		// Part of the IRepairable interface
+		public abstract void Repair();
+
 		public override string ToString()
 		{
-			return $"Device: {DeviceName}, Enabled: {IsEnabled}";
+			return $"Device: {Name}, Enabled: {IsEnabled}";
 		}
 	}
 
-	public class TemperatureSensor : Sensor, ISensorInfo
+	// 2.1) INTERFACE(S) FOR SEPARATE CLASSES
+	public interface IRepairable
+	{
+		void Repair();
+	}
+
+	// CONCRETE SENSOR CLASSES
+	public class TemperatureSensor : Sensor
 	{
 		public double TemperatureThreshold { get; set; }
 		public double TemperatureThreshold2 { get; set; }
+		public double CurrentTemperature { get; set; }
 
 		public TemperatureSensor(string name, double threshold)
+			: base(name)
 		{
-			SensorName = name;
 			TemperatureThreshold = threshold;
 			IsTriggered = false;
 		}
 
 		public TemperatureSensor(string name, double threshold1, double threshold2)
+			: base(name)
 		{
-			SensorName = name;
 			TemperatureThreshold = threshold1;
 			TemperatureThreshold2 = threshold2;
 			IsTriggered = false;
+			CurrentTemperature = new Random().NextDouble() * 100;
 		}
 
 		public override void CheckSensor()
 		{
-			double currentTemperature = new Random().NextDouble() * 100;
-			if (currentTemperature >= TemperatureThreshold)
+			if (CurrentTemperature >= TemperatureThreshold)
 			{
 				IsTriggered = true;
 			}
-			if (TemperatureThreshold2 > TemperatureThreshold && currentTemperature >= TemperatureThreshold2)
+			if (TemperatureThreshold2 > TemperatureThreshold && CurrentTemperature >= TemperatureThreshold2)
 			{
 				IsTriggered = true;
 			}
 		}
 
-		public string GetSensorInfo()
+		public void ForceTemperature(double forcedValue)
 		{
-			return $"TemperatureSensor: {SensorName}, T1={TemperatureThreshold}, T2={TemperatureThreshold2}";
+			CurrentTemperature = forcedValue;
+			IsTriggered = false; // Will re-check in CheckSensor()
 		}
 	}
 
-	public class LightSensor : Sensor, ISensorInfo
+	public class LightSensor : Sensor
 	{
 		public int LightLevelThreshold { get; set; }
 
 		public LightSensor(string name, int threshold)
+			: base(name)
 		{
-			SensorName = name;
 			LightLevelThreshold = threshold;
 			IsTriggered = false;
 		}
@@ -98,18 +125,13 @@ namespace BuildingSecuritySystem
 				IsTriggered = true;
 			}
 		}
-
-		public string GetSensorInfo()
-		{
-			return $"LightSensor: {SensorName}, Threshold={LightLevelThreshold}";
-		}
 	}
 
-	public class MovementSensor : Sensor, ISensorInfo
+	public class MovementSensor : Sensor
 	{
 		public MovementSensor(string name)
+			: base(name)
 		{
-			SensorName = name;
 			IsTriggered = false;
 		}
 
@@ -117,87 +139,104 @@ namespace BuildingSecuritySystem
 		{
 			IsTriggered = (new Random().Next(0, 10) > 6);
 		}
-
-		public string GetSensorInfo()
-		{
-			return $"MovementSensor: {SensorName}";
-		}
 	}
 
-	public class Camera : Device, IDeviceControl
+	// CONCRETE DEVICE CLASSES
+	public class Camera : Device
 	{
-		public Camera(string name)
+		public Camera(string name) : base(name)
 		{
-			DeviceName = name;
 			IsEnabled = false;
 		}
 
-		public override void Activate() { IsEnabled = true; }
-		public override void Deactivate() { IsEnabled = false; }
-
-		public void TurnOn() { Activate(); }
-		public void TurnOff() { Deactivate(); }
-	}
-
-	public class Vent : Device, IDeviceControl
-	{
-		public Vent(string name)
+		public override void Activate()
 		{
-			DeviceName = name;
+			IsEnabled = true;
+		}
+
+		public override void Deactivate()
+		{
 			IsEnabled = false;
 		}
 
-		public override void Activate() { IsEnabled = true; }
-		public override void Deactivate() { IsEnabled = false; }
-
-		public void TurnOn() { Activate(); }
-		public void TurnOff() { Deactivate(); }
+		public override void Repair()
+		{
+			Console.WriteLine($"{Name} is undergoing camera maintenance...");
+		}
 	}
 
-	public class Lamp : Device, IDeviceControl
+	public class Vent : Device
 	{
-		public Lamp(string name)
+		public Vent(string name) : base(name)
 		{
-			DeviceName = name;
 			IsEnabled = false;
 		}
 
-		public override void Activate() { IsEnabled = true; }
-		public override void Deactivate() { IsEnabled = false; }
+		public override void Activate()
+		{
+			IsEnabled = true;
+		}
 
-		public void TurnOn() { Activate(); }
-		public void TurnOff() { Deactivate(); }
+		public override void Deactivate()
+		{
+			IsEnabled = false;
+		}
+
+		public override void Repair()
+		{
+			Console.WriteLine($"{Name} is having its fan and airflow system repaired...");
+		}
 	}
 
-	public sealed class SmokeTemperatureSensor : TemperatureSensor
+	public class Lamp : Device
 	{
-		public SmokeTemperatureSensor(string name, double threshold1, double threshold2)
-			: base(name, threshold1, threshold2) { }
-
-		public override void CheckSensor()
+		public Lamp(string name) : base(name)
 		{
-			base.CheckSensor();
-			if (IsTriggered)
-			{
-				SecurityPanel.LogEvent("SmokeTemperatureSensor triggered extra safety procedure");
-			}
+			IsEnabled = false;
 		}
 
-		public void ExtraSmokeMethod()
+		public override void Activate()
 		{
-			SecurityPanel.LogEvent("SmokeTemperatureSensor performed specialized check");
+			IsEnabled = true;
+		}
+
+		public override void Deactivate()
+		{
+			IsEnabled = false;
+		}
+
+		public override void Repair()
+		{
+			Console.WriteLine($"{Name} is being checked for burned-out bulbs...");
 		}
 	}
 
-	public sealed class SmartLamp : Lamp
+	// 3) SEALED (GERMETIZOVAN) CLASSES
+	public sealed class SealedLamp : Lamp
 	{
-		public SmartLamp(string name) : base(name) { }
+		public SealedLamp(string name) : base(name) { }
 
-		public void Dim(int level)
+		// Example of a specific method for the sealed class
+		public void SpecialSealedLampMethod()
 		{
-			SecurityPanel.LogEvent($"SmartLamp {DeviceName} dimmed to level {level}");
+			Console.WriteLine($"SealedLamp '{Name}': specialized lighting action!");
 		}
 	}
+
+	public sealed class SealedVent : Vent
+	{
+		public SealedVent(string name) : base(name) { }
+
+		// Another specific method for the sealed class
+		public void SpecialSealedVentMethod()
+		{
+			Console.WriteLine($"SealedVent '{Name}': specialized venting action!");
+		}
+	}
+
+	// 3.3) WE ALREADY HAVE A POLYMORPHIC METHOD BELOW, BUT WE'LL NOTE IT EXPLICITLY:
+	// The 'Simulate' method in Room uses base-class references to Sensors/Devices
+	// and calls CheckSensor() / Activate() / Deactivate() polymorphically.
 
 	public class Room
 	{
@@ -209,11 +248,11 @@ namespace BuildingSecuritySystem
 		private int _sensorCount;
 		private int _deviceCount;
 
+		public string Name { get; set; }
 		public double Width { get; set; }
 		public double Length { get; set; }
 		public int WindowsCount { get; set; }
 		public int DoorsCount { get; set; }
-		public double VolumeUsage { get; set; }
 		public bool IsCorridor { get; set; }
 
 		public Room()
@@ -308,28 +347,12 @@ namespace BuildingSecuritySystem
 			}
 		}
 
-		public override string ToString()
-		{
-			var sb = new StringBuilder();
-			sb.AppendLine("Room info:");
-			sb.AppendLine(" Sensors:");
-			for (int i = 0; i < _sensorCount; i++)
-			{
-				sb.AppendLine("  " + _sensors[i]);
-			}
-			sb.AppendLine(" Devices:");
-			for (int i = 0; i < _deviceCount; i++)
-			{
-				sb.AppendLine("  " + _devices[i]);
-			}
-			return sb.ToString();
-		}
-
 		public double GetArea()
 		{
 			return Width * Length;
 		}
 
+		// Automatic installations as an example
 		public void AutoInstallEquipment()
 		{
 			double area = GetArea();
@@ -353,7 +376,7 @@ namespace BuildingSecuritySystem
 				{
 					Camera cam = new Camera("Camera_" + (i + 1));
 					AddDevice(cam);
-					AddSensor(new LightSensor("LightSensor_for_" + cam.DeviceName, 50));
+					AddSensor(new LightSensor("LightSensor_for_" + cam.Name, 50));
 				}
 				for (int i = 0; i < DoorsCount; i++)
 				{
@@ -382,35 +405,39 @@ namespace BuildingSecuritySystem
 			}
 		}
 
-		public void Simulate()
+		// 3.3) POLYMORPHIC METHOD (demonstration):
+		// This method references Sensors and Devices via the base classes and calls their overridden methods.
+		public void Simulate(string buildingName, int floorNumber, bool randomize = false)
 		{
 			CheckAllSensors();
 			for (int i = 0; i < _sensorCount; i++)
 			{
 				if (_sensors[i] is TemperatureSensor tempSens && tempSens.IsTriggered)
 				{
-					double currentT = new Random().NextDouble() * 100;
+					double currentT = tempSens.CurrentTemperature;
 					if (currentT >= tempSens.TemperatureThreshold && currentT < tempSens.TemperatureThreshold2)
 					{
-						SecurityPanel.LogEvent("Temperature above T1 in room. Lamp ON briefly, camera snapshot.");
-						Device lamp = FindDevice<Lamp>();
+						SecurityPanel.LogEvent($"Temperature above T1 in Building '{buildingName}', Floor #{floorNumber}, Room '{Name}', fixed by sensor '{tempSens.Name}'. Lamp ON briefly, camera snapshot...");
+						Device lamp = FindDevice<Lamp>(); 
 						bool wasLampOn = (lamp != null && lamp.IsEnabled);
 						if (lamp != null) lamp.Activate();
+
 						Device camera = FindDevice<Camera>();
 						if (camera != null) camera.Activate();
-						SecurityPanel.LogEvent("Snapshot taken.");
+						SecurityPanel.LogEvent($"Snapshot taken in Building '{buildingName}', Floor #{floorNumber}, Room '{Name}'.");
+
 						if (!wasLampOn && lamp != null) lamp.Deactivate();
 						if (camera != null) camera.Deactivate();
 					}
 					else if (tempSens.TemperatureThreshold2 > tempSens.TemperatureThreshold &&
 							 currentT >= tempSens.TemperatureThreshold2)
 					{
-						SecurityPanel.LogEvent("Temperature above T2 in room. Lamp OFF, water ON briefly.");
+						SecurityPanel.LogEvent($"Temperature above T2 in Building '{buildingName}', Floor #{floorNumber}, Room '{Name}', fixed by sensor '{tempSens.Name}'. Lamp OFF, water ON briefly.");
 						Device lamp = FindDevice<Lamp>();
 						if (lamp != null) lamp.Deactivate();
 						Device vent = FindDevice<Vent>();
 						if (vent != null) vent.Activate();
-						SecurityPanel.LogEvent("Water flow started.");
+						SecurityPanel.LogEvent($"Water flow started in Building '{buildingName}', Floor #{floorNumber}, Room '{Name}'.");
 						if (vent != null) vent.Deactivate();
 					}
 				}
@@ -420,9 +447,9 @@ namespace BuildingSecuritySystem
 					if (lamp != null && !lamp.IsEnabled)
 					{
 						lamp.Activate();
-						SecurityPanel.LogEvent("Movement detected; lamp turned ON briefly.");
+						SecurityPanel.LogEvent($"Movement detected in Building '{buildingName}', Floor #{floorNumber}, Room '{Name}'; lamp ON briefly.");
 						lamp.Deactivate();
-						SecurityPanel.LogEvent("Lamp turned OFF again.");
+						SecurityPanel.LogEvent($"Lamp OFF again in Building '{buildingName}', Floor #{floorNumber}, Room '{Name}'.");
 					}
 				}
 				else if (_sensors[i] is LightSensor lightSens && lightSens.IsTriggered)
@@ -431,7 +458,7 @@ namespace BuildingSecuritySystem
 					if (camera != null && !camera.IsEnabled)
 					{
 						camera.Activate();
-						SecurityPanel.LogEvent("Light sensor triggered; camera on, snapshot taken.");
+						SecurityPanel.LogEvent($"Light sensor triggered in Building '{buildingName}', Floor #{floorNumber}, Room '{Name}'; camera on, snapshot taken.");
 						camera.Deactivate();
 					}
 				}
@@ -445,6 +472,34 @@ namespace BuildingSecuritySystem
 				if (_devices[i] is T dev) return dev;
 			}
 			return null;
+		}
+
+		public override string ToString()
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine($"Room '{Name}' => Width={Width}, Length={Length}, Windows={WindowsCount}, Doors={DoorsCount}, Corridor={IsCorridor}");
+			sb.AppendLine(" Sensors:");
+			for (int i = 0; i < _sensorCount; i++)
+			{
+				sb.AppendLine("  " + _sensors[i]);
+			}
+			sb.AppendLine(" Devices:");
+			for (int i = 0; i < _deviceCount; i++)
+			{
+				sb.AppendLine("  " + _devices[i]);
+			}
+			return sb.ToString();
+		}
+
+		public void ForceTemperature(double newT)
+		{
+			for (int i = 0; i < _sensorCount; i++)
+			{
+				if (_sensors[i] is TemperatureSensor t)
+				{
+					t.ForceTemperature(newT);
+				}
+			}
 		}
 	}
 
@@ -480,7 +535,6 @@ namespace BuildingSecuritySystem
 	{
 		public string Name;
 		private int _floorsCount;
-		protected double _area;
 		private static int _buildingCounter;
 		public static int BuildingCounter => _buildingCounter;
 
@@ -488,12 +542,6 @@ namespace BuildingSecuritySystem
 		{
 			get { return _floorsCount; }
 			set { if (value >= 0) _floorsCount = value; }
-		}
-
-		public double Area
-		{
-			get { return _area; }
-			set { if (value >= 0) _area = value; }
 		}
 
 		public List<Floor> Floors { get; } = new List<Floor>();
@@ -507,15 +555,13 @@ namespace BuildingSecuritySystem
 		{
 			Name = "NoName";
 			_floorsCount = 0;
-			_area = 0.0;
 			_buildingCounter++;
 		}
 
-		public Building(string name, int floors, double area)
+		public Building(string name, int floors)
 		{
 			Name = name;
 			_floorsCount = floors >= 0 ? floors : 0;
-			_area = area >= 0 ? area : 0.0;
 			_buildingCounter++;
 		}
 
@@ -524,7 +570,6 @@ namespace BuildingSecuritySystem
 			if (other == null) throw new ArgumentNullException(nameof(other));
 			this.Name = other.Name;
 			this._floorsCount = other._floorsCount;
-			this._area = other._area;
 			_buildingCounter++;
 		}
 
@@ -532,13 +577,11 @@ namespace BuildingSecuritySystem
 		{
 			Name = "DefaultBuilding";
 			FloorsCount = 1;
-			Area = 100.0;
 		}
-		public void Initialize(string name, int floors, double area)
+		public void Initialize(string name, int floors)
 		{
 			if (!string.IsNullOrWhiteSpace(name)) Name = name;
 			if (floors >= 0) FloorsCount = floors;
-			if (area >= 0) Area = area;
 		}
 
 		public void InputFromConsole()
@@ -559,16 +602,6 @@ namespace BuildingSecuritySystem
 				}
 				Console.WriteLine("Invalid floors count. Please try again.");
 			}
-			while (true)
-			{
-				Console.Write("Enter total building area (>=0): ");
-				if (double.TryParse(Console.ReadLine(), out double tmpArea) && tmpArea >= 0)
-				{
-					Area = tmpArea;
-					break;
-				}
-				Console.WriteLine("Invalid area. Please try again.");
-			}
 		}
 
 		public void OutputToConsole()
@@ -576,13 +609,13 @@ namespace BuildingSecuritySystem
 			Console.WriteLine(ToString());
 		}
 
+		// Simplified file I/O
 		public void WriteToFile(string filePath)
 		{
 			using (StreamWriter sw = new StreamWriter(filePath, false))
 			{
 				sw.WriteLine(Name);
 				sw.WriteLine(_floorsCount);
-				sw.WriteLine(_area);
 			}
 		}
 
@@ -596,9 +629,6 @@ namespace BuildingSecuritySystem
 				line = sr.ReadLine();
 				if (int.TryParse(line, out int floors) && floors >= 0)
 					_floorsCount = floors;
-				line = sr.ReadLine();
-				if (double.TryParse(line, out double area) && area >= 0)
-					_area = area;
 			}
 		}
 
@@ -609,29 +639,125 @@ namespace BuildingSecuritySystem
 
 		public override string ToString()
 		{
-			return $"Building '{Name}' => Floors: {_floorsCount}, Area: {_area} m^2";
+			return $"Building '{Name}' => Floors: {_floorsCount}";
 		}
 
-		public void AutoCreateFloorsAndRooms()
+		public void InputFloorsAndRoomsFromConsole()
 		{
+			Floors.Clear();
 			for (int i = 1; i <= FloorsCount; i++)
 			{
-				Floor f = new Floor(i, 3.0 + i);
-				int roomsCount = new Random().Next(1, 4);
-				for (int r = 1; r <= roomsCount; r++)
+				Console.WriteLine($"\n--- Enter info for Floor #{i} ---");
+				double floorHeight = 3.0 + i;
+				Console.Write($"Enter Floor {i} Height (default {floorHeight}): ");
+				string tmp = Console.ReadLine();
+				if (double.TryParse(tmp, out double userHeight) && userHeight > 0)
+				{
+					floorHeight = userHeight;
+				}
+
+				Floor floor = new Floor(i, floorHeight);
+
+				int roomCount;
+				while (true)
+				{
+					Console.Write($"How many rooms on Floor #{i}?: ");
+					if (int.TryParse(Console.ReadLine(), out roomCount) && roomCount > 0)
+					{
+						break;
+					}
+					Console.WriteLine("Invalid room count. Try again.");
+				}
+
+				for (int r = 1; r <= roomCount; r++)
 				{
 					Room room = new Room();
-					room.Width = new Random().Next(3, 10);
-					room.Length = new Random().Next(3, 10);
-					room.DoorsCount = new Random().Next(1, 3);
-					room.WindowsCount = new Random().Next(0, 4);
-					room.VolumeUsage = new Random().Next(0, 100);
-					room.IsCorridor = (r == roomsCount && roomsCount > 2);
+					room.Name = $"Floor{i}_Room{r}";
+
+					Console.WriteLine($"  >> Enter data for Room {r}:");
+					Console.Write($"     Room name (default '{room.Name}'): ");
+					string rmName = Console.ReadLine();
+					if (!string.IsNullOrWhiteSpace(rmName)) room.Name = rmName;
+
+					while (true)
+					{
+						Console.Write("     Width (>=1): ");
+						if (double.TryParse(Console.ReadLine(), out double w) && w >= 1)
+						{
+							room.Width = w;
+							break;
+						}
+						Console.WriteLine("     Invalid width. Try again.");
+					}
+
+					while (true)
+					{
+						Console.Write("     Length (>=1): ");
+						if (double.TryParse(Console.ReadLine(), out double l) && l >= 1)
+						{
+							room.Length = l;
+							break;
+						}
+						Console.WriteLine("     Invalid length. Try again.");
+					}
+
+					while (true)
+					{
+						Console.Write("     WindowsCount (>=0): ");
+						if (int.TryParse(Console.ReadLine(), out int wc) && wc >= 0)
+						{
+							room.WindowsCount = wc;
+							break;
+						}
+						Console.WriteLine("     Invalid windows count. Try again.");
+					}
+
+					while (true)
+					{
+						Console.Write("     DoorsCount (>=0): ");
+						if (int.TryParse(Console.ReadLine(), out int dc) && dc >= 0)
+						{
+							room.DoorsCount = dc;
+							break;
+						}
+						Console.WriteLine("     Invalid doors count. Try again.");
+					}
+
+					Console.Write("     Is corridor? (true/false) ");
+					string isCorrStr = Console.ReadLine();
+					if (!string.IsNullOrEmpty(isCorrStr))
+					{
+						bool.TryParse(isCorrStr, out bool corr);
+						room.IsCorridor = corr;
+					}
+
+					// Automatically install devices/sensors
 					room.AutoInstallEquipment();
-					f.AddRoom(room);
+					floor.AddRoom(room);
 				}
-				Floors.Add(f);
+
+				Floors.Add(floor);
 			}
+		}
+
+		// Simulate a "fire" by forcing a high temperature
+		public void StartFire(int floorNumber, int roomNumber, bool severe = false)
+		{
+			if (floorNumber < 1 || floorNumber > Floors.Count)
+			{
+				Console.WriteLine("Invalid floor number!");
+				return;
+			}
+			var floor = Floors[floorNumber - 1];
+			if (roomNumber < 1 || roomNumber > floor.Rooms.Count)
+			{
+				Console.WriteLine("Invalid room number!");
+				return;
+			}
+			var room = floor.Rooms[roomNumber - 1];
+			double fireTemp = severe ? 65.0 : 35.0; // T2-like or T1-like
+			room.ForceTemperature(fireTemp);
+			Console.WriteLine($"Started {(severe ? "severe" : "mild")} fire in Floor#{floorNumber}, Room '{room.Name}'.");
 		}
 
 		public void SimulateAllRooms()
@@ -640,7 +766,7 @@ namespace BuildingSecuritySystem
 			{
 				foreach (var rm in fl.Rooms)
 				{
-					rm.Simulate();
+					rm.Simulate(Name, fl.FloorNumber);
 				}
 			}
 		}
@@ -655,95 +781,101 @@ namespace BuildingSecuritySystem
 		}
 	}
 
+	// 4) MAIN PROGRAM TO DEMONSTRATE EVERYTHING
 	public class Pult
 	{
-		private static void PolymorphicSensorTest(Sensor sensor)
-		{
-			sensor.CheckSensor();
-			if (sensor is SmokeTemperatureSensor sts)
-			{
-				sts.ExtraSmokeMethod();
-			}
-			Console.WriteLine(sensor);
-		}
-
-		private static void PolymorphicDeviceTest(Device device)
-		{
-			device.Activate();
-			if (device is SmartLamp lamp)
-			{
-				lamp.Dim(50);
-			}
-			device.Deactivate();
-			Console.WriteLine(device);
-		}
-
 		public static void Main(string[] args)
 		{
-			// 1) Demonstrate default constructor
+			Console.WriteLine("=== DEMO OF BUILDING SECURITY SYSTEM ===");
+
 			Building b1 = new Building();
 			b1.OutputToConsole();
 
-			// 2) Demonstrate param constructor
-			Building b2 = new Building("Office Center", 5, 2500.5);
+			Building b2 = new Building("Office Center", 5);
 			b2.OutputToConsole();
 
-			// 3) Demonstrate copy constructor
 			Building b3 = new Building(b2);
 			b3.Name = "Office Clone";
 			b3.OutputToConsole();
 
-			// 4) Demonstrate overloaded Initialize() methods
 			b1.Initialize();
 			b1.OutputToConsole();
-			b1.Initialize("Warehouse", 2, 500.0);
+			b1.Initialize("Warehouse", 2);
 			b1.OutputToConsole();
 
-			// 5) Demonstrate console input with validation
+			// Basic building console input
 			b1.InputFromConsole();
 			b1.OutputToConsole();
 
-			// 6) Demonstrate file I/O
+			// File IO
 			string testFile = "building_info.txt";
 			b1.WriteToFile(testFile);
 			Console.WriteLine("Wrote b1 to file.");
 
-			// Re-use b2 to read from that file
 			b2.ReadFromFile(testFile);
 			Console.WriteLine("Read file into b2:");
 			b2.OutputToConsole();
 
-			// 7) Demonstrate operator overloading on Room
-			Room r1 = new Room();
-			TemperatureSensor ts = new TemperatureSensor("TempSensor1", 30.0);
-			MovementSensor ms = new MovementSensor("MoveSensor1");
-			r1 = r1 + ts;
-			r1 = r1 + ms;
-			// Remove a sensor:
-			// r1 = r1 - ms;
-
-			// Add some devices
+			// Room example
+			Room r1 = new Room { Name = "BigRoom", Width = 5, Length = 6 };
+			r1 = r1 + new TemperatureSensor("TempSensor1", 30.0, 60.0);
+			r1 = r1 + new MovementSensor("MoveSensor1");
 			r1.AddDevice(new Camera("Cam1"));
 			r1.AddDevice(new Lamp("Lamp1"));
-
-			// Check all sensors
 			r1.CheckAllSensors();
 			Console.WriteLine(r1);
 
-			// 8) Demonstrate static field nd method usage
 			Building.ShowBuildingCount();
-			Building bigBuilding = new Building("Big Complex", 3, 9999); // how many building objects were created
-			bigBuilding.AutoCreateFloorsAndRooms();
-			bigBuilding.SimulateAllRooms();
-			Console.WriteLine("Simulation complete. Check SecurityLog.txt for events.");
 
-			// 9) Demonstrate interfaces and sealed
-			Sensor sealedSmokeSensor = new SmokeTemperatureSensor("SmokeSensorX", 25, 50);
-			PolymorphicSensorTest(sealedSmokeSensor);
+			// Creating floors/rooms from console
+			Console.WriteLine("\n=== Build custom building with floors/rooms from console! ===");
+			Building custom = new Building();
+			custom.InputFromConsole();
+			custom.InputFloorsAndRoomsFromConsole();
+			SecurityPanel.LogEvent($"=== RANDOM FIRE GENERATION ===");
+			custom.SimulateAllRooms();
 
-			Device sealedSmartLamp = new SmartLamp("SmartLampX");
-			PolymorphicDeviceTest(sealedSmartLamp);
+			// Reset temperature for demonstration
+			foreach (var fl in custom.Floors)
+			{
+				foreach (var rm in fl.Rooms)
+				{
+					rm.ForceTemperature(20.0);
+				}
+			}
 
+			// Demonstrate choosing where a fire starts
+			Console.WriteLine("\n=== Manually Start Fire in a Specific Floor/Room ===");
+			Console.Write("Choose Floor # to start fire: ");
+			int userFloor = int.Parse(Console.ReadLine() ?? "1");
+			Console.Write("Choose Room # on that floor: ");
+			int userRoom = int.Parse(Console.ReadLine() ?? "1");
+			Console.Write("Mild or severe fire? (mild/severe): ");
+			string severity = Console.ReadLine();
+			bool severeFire = (severity?.ToLower() == "severe");
+			custom.StartFire(userFloor, userRoom, severeFire);
+			SecurityPanel.LogEvent($"=== USER SPECIFIED FIRE GENERATION ===");
+			custom.SimulateAllRooms();
+
+			// 4.1) DEMONSTRATION OF SEALED CLASSES & INTERFACE
+			Console.WriteLine("\n=== Testing Sealed Classes and IRepairable Interface ===");
+			SealedLamp sl = new SealedLamp("SealedLamp1");
+			sl.Activate();
+			Console.WriteLine($"IsEnabled after Activate(): {sl.IsEnabled}");
+			sl.Repair(); // from the IRepairable interface
+			sl.SpecialSealedLampMethod();
+			sl.Deactivate();
+			Console.WriteLine($"IsEnabled after Deactivate(): {sl.IsEnabled}");
+
+			SealedVent sv = new SealedVent("SealedVent1");
+			sv.Activate();
+			Console.WriteLine($"IsEnabled after Activate(): {sv.IsEnabled}");
+			sv.Repair();
+			sv.SpecialSealedVentMethod();
+			sv.Deactivate();
+			Console.WriteLine($"IsEnabled after Deactivate(): {sv.IsEnabled}");
+
+			Console.WriteLine("Check 'SecurityLog.txt' for logs of triggered events.");
 			Console.WriteLine("\nPress any key to exit...");
 			Console.ReadKey();
 		}

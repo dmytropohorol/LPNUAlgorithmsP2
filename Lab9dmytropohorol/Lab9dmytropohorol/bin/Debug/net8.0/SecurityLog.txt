@@ -1,17 +1,170 @@
-[2025-03-07 11:18:48] Temperature above T2 in room. Lamp OFF, water ON briefly.
-[2025-03-07 11:18:48] Water flow started.
-[2025-03-07 11:18:48] Temperature above T2 in room. Lamp OFF, water ON briefly.
-[2025-03-07 11:18:48] Water flow started.
-[2025-03-07 11:18:48] Light sensor triggered; camera on, snapshot taken.
-[2025-03-07 11:18:48] Light sensor triggered; camera on, snapshot taken.
-[2025-03-07 11:18:48] Temperature above T2 in room. Lamp OFF, water ON briefly.
-[2025-03-07 11:18:48] Water flow started.
-[2025-03-07 11:18:48] Temperature above T2 in room. Lamp OFF, water ON briefly.
-[2025-03-07 11:18:48] Water flow started.
-[2025-03-07 11:18:48] Temperature above T2 in room. Lamp OFF, water ON briefly.
-[2025-03-07 11:18:48] Water flow started.
-[2025-03-07 11:18:48] Temperature above T1 in room. Lamp ON briefly, camera snapshot.
-[2025-03-07 11:18:48] Snapshot taken.
-[2025-03-07 11:18:56] SmokeTemperatureSensor triggered extra safety procedure
-[2025-03-07 11:18:56] SmokeTemperatureSensor performed specialized check
-[2025-03-07 11:18:56] SmartLamp SmartLampX dimmed to level 50
+[2025-03-10 18:29:49] === RANDOM FIRE GENERATION ===
+[2025-03-10 18:29:49] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_1'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:29:49] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:29:49] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_3'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:29:49] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_6'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_7'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:29:49] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_8'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:29:49] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_9'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:29:49] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_11'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:29:49] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_12'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:29:49] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_13'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:29:49] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_16'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:29:49] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_17'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:29:49] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_19'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:29:49] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_20'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:29:49] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'Corr_Temp_2'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'Corr_Temp_3'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:29:49] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'Corr_Temp_4'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:29:49] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:29:49] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'Corr_Temp_5'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:29:49] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'Corr_Temp_6'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:29:49] Light sensor triggered in Building 'some', Floor #1, Room 'Floor1_Room2'; camera on, snapshot taken.
+[2025-03-10 18:29:49] Light sensor triggered in Building 'some', Floor #2, Room 'Floor2_Room1'; camera on, snapshot taken.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #2, Room 'Floor2_Room2', fixed by sensor 'Corr_Temp_1'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #2, Room 'Floor2_Room2'.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #2, Room 'Floor2_Room2', fixed by sensor 'Corr_Temp_2'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #2, Room 'Floor2_Room2'.
+[2025-03-10 18:29:49] Temperature above T1 in Building 'some', Floor #2, Room 'Floor2_Room2', fixed by sensor 'Corr_Temp_3'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:29:49] Snapshot taken in Building 'some', Floor #2, Room 'Floor2_Room2'.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #2, Room 'Floor2_Room2', fixed by sensor 'Corr_Temp_4'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #2, Room 'Floor2_Room2'.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #2, Room 'Floor2_Room2', fixed by sensor 'Corr_Temp_5'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #2, Room 'Floor2_Room2'.
+[2025-03-10 18:29:49] Temperature above T1 in Building 'some', Floor #2, Room 'Floor2_Room2', fixed by sensor 'Corr_Temp_8'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:29:49] Snapshot taken in Building 'some', Floor #2, Room 'Floor2_Room2'.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #2, Room 'Floor2_Room2', fixed by sensor 'Corr_Temp_9'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #2, Room 'Floor2_Room2'.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #2, Room 'Floor2_Room2', fixed by sensor 'Corr_Temp_12'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #2, Room 'Floor2_Room2'.
+[2025-03-10 18:29:49] Temperature above T1 in Building 'some', Floor #2, Room 'Floor2_Room2', fixed by sensor 'Corr_Temp_14'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:29:49] Snapshot taken in Building 'some', Floor #2, Room 'Floor2_Room2'.
+[2025-03-10 18:29:49] Temperature above T1 in Building 'some', Floor #2, Room 'Floor2_Room2', fixed by sensor 'Corr_Temp_15'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:29:49] Snapshot taken in Building 'some', Floor #2, Room 'Floor2_Room2'.
+[2025-03-10 18:29:49] Temperature above T1 in Building 'some', Floor #2, Room 'Floor2_Room2', fixed by sensor 'Corr_Temp_16'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:29:49] Snapshot taken in Building 'some', Floor #2, Room 'Floor2_Room2'.
+[2025-03-10 18:29:49] Temperature above T1 in Building 'some', Floor #2, Room 'Floor2_Room2', fixed by sensor 'Corr_Temp_17'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:29:49] Snapshot taken in Building 'some', Floor #2, Room 'Floor2_Room2'.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #2, Room 'Floor2_Room2', fixed by sensor 'Corr_Temp_18'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #2, Room 'Floor2_Room2'.
+[2025-03-10 18:29:49] Temperature above T2 in Building 'some', Floor #2, Room 'Floor2_Room2', fixed by sensor 'Corr_Temp_20'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:49] Water flow started in Building 'some', Floor #2, Room 'Floor2_Room2'.
+[2025-03-10 18:29:58] === USER SPECIFIED FIRE GENERATION ===
+[2025-03-10 18:29:58] Light sensor triggered in Building 'some', Floor #1, Room 'Floor1_Room2'; camera on, snapshot taken.
+[2025-03-10 18:29:58] Light sensor triggered in Building 'some', Floor #1, Room 'Floor1_Room2'; camera on, snapshot taken.
+[2025-03-10 18:29:58] Light sensor triggered in Building 'some', Floor #1, Room 'Floor1_Room2'; camera on, snapshot taken.
+[2025-03-10 18:29:58] Light sensor triggered in Building 'some', Floor #1, Room 'Floor1_Room2'; camera on, snapshot taken.
+[2025-03-10 18:29:58] Light sensor triggered in Building 'some', Floor #1, Room 'Floor1_Room2'; camera on, snapshot taken.
+[2025-03-10 18:29:58] Temperature above T2 in Building 'some', Floor #2, Room 'Floor2_Room1', fixed by sensor 'TempSensor_1'. Lamp OFF, water ON briefly.
+[2025-03-10 18:29:58] Water flow started in Building 'some', Floor #2, Room 'Floor2_Room1'.
+[2025-03-10 18:29:58] Light sensor triggered in Building 'some', Floor #2, Room 'Floor2_Room1'; camera on, snapshot taken.
+[2025-03-10 18:29:58] Light sensor triggered in Building 'some', Floor #2, Room 'Floor2_Room1'; camera on, snapshot taken.
+[2025-03-10 18:29:58] Light sensor triggered in Building 'some', Floor #2, Room 'Floor2_Room1'; camera on, snapshot taken.
+[2025-03-10 18:31:08] === RANDOM FIRE GENERATION ===
+[2025-03-10 18:31:08] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_2'. Lamp OFF, water ON briefly.
+[2025-03-10 18:31:08] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:31:08] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_3'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:08] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:31:08] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_7'. Lamp OFF, water ON briefly.
+[2025-03-10 18:31:08] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:31:08] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_9'. Lamp OFF, water ON briefly.
+[2025-03-10 18:31:08] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:31:08] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_12'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:08] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:31:08] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_13'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:08] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:31:08] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_14'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:08] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:31:08] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_15'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:08] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:31:08] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_16'. Lamp OFF, water ON briefly.
+[2025-03-10 18:31:08] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:31:08] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_17'. Lamp OFF, water ON briefly.
+[2025-03-10 18:31:08] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:31:08] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_18'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:08] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:31:08] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_19'. Lamp OFF, water ON briefly.
+[2025-03-10 18:31:08] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:31:08] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room1', fixed by sensor 'TempSensor_20'. Lamp OFF, water ON briefly.
+[2025-03-10 18:31:08] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room1'.
+[2025-03-10 18:31:08] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_1'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:08] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:08] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_2'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:08] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:08] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_3'. Lamp OFF, water ON briefly.
+[2025-03-10 18:31:08] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:08] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_4'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:08] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:08] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_5'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:08] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:08] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_6'. Lamp OFF, water ON briefly.
+[2025-03-10 18:31:08] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:08] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_8'. Lamp OFF, water ON briefly.
+[2025-03-10 18:31:08] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:08] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_9'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:08] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:08] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_13'. Lamp OFF, water ON briefly.
+[2025-03-10 18:31:08] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:08] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_14'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:08] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:08] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_16'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:08] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:08] Temperature above T2 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_19'. Lamp OFF, water ON briefly.
+[2025-03-10 18:31:08] Water flow started in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] === USER SPECIFIED FIRE GENERATION ===
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_1'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_2'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_3'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_4'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_5'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_6'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_7'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_8'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_9'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_10'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_11'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_12'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_13'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_14'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_15'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_16'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_17'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_18'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_19'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
+[2025-03-10 18:31:13] Temperature above T1 in Building 'some', Floor #1, Room 'Floor1_Room2', fixed by sensor 'TempSensor_20'. Lamp ON briefly, camera snapshot...
+[2025-03-10 18:31:13] Snapshot taken in Building 'some', Floor #1, Room 'Floor1_Room2'.
