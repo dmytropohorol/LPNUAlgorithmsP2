@@ -192,7 +192,6 @@ bool NormalizeLine(char* Buffer)
 {
 	size_t Length = std::strlen(Buffer);
 
-	// TODO: validate this part of code with professor
 	if (!Length || (Length == 1 && (Buffer[0] == '\n' || Buffer[0] == '\r')))
 	{
 		return false;
