@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Xml.Linq;
 
 namespace BuildingSecuritySystem
 {
@@ -33,6 +34,7 @@ namespace BuildingSecuritySystem
 	{
 		public double TemperatureThreshold { get; set; }
 		public double TemperatureThreshold2 { get; set; }
+		public double currentTemperature { get; set; }
 
 		public TemperatureSensor(string name, double threshold)
 		{
@@ -47,11 +49,11 @@ namespace BuildingSecuritySystem
 			TemperatureThreshold = threshold1;
 			TemperatureThreshold2 = threshold2;
 			IsTriggered = false;
+			currentTemperature = new Random().NextDouble() * 100;
 		}
 
 		public override void CheckSensor()
 		{
-			double currentTemperature = new Random().NextDouble() * 100;
 			if (currentTemperature >= TemperatureThreshold)
 			{
 				IsTriggered = true;
@@ -60,6 +62,12 @@ namespace BuildingSecuritySystem
 			{
 				IsTriggered = true;
 			}
+		}
+
+		public void ForceTemperature(double forcedValue)
+		{
+			currentTemperature = forcedValue;
+			IsTriggered = false; // Will re-check in CheckSensor()
 		}
 	}
 
@@ -144,11 +152,11 @@ namespace BuildingSecuritySystem
 		private int _sensorCount;
 		private int _deviceCount;
 
+		public string Name { get; set; }
 		public double Width { get; set; }
 		public double Length { get; set; }
 		public int WindowsCount { get; set; }
 		public int DoorsCount { get; set; }
-		public double VolumeUsage { get; set; }
 		public bool IsCorridor { get; set; }
 
 		public Room()
@@ -243,23 +251,6 @@ namespace BuildingSecuritySystem
 			}
 		}
 
-		public override string ToString()
-		{
-			var sb = new StringBuilder();
-			sb.AppendLine("Room info:");
-			sb.AppendLine(" Sensors:");
-			for (int i = 0; i < _sensorCount; i++)
-			{
-				sb.AppendLine("  " + _sensors[i]);
-			}
-			sb.AppendLine(" Devices:");
-			for (int i = 0; i < _deviceCount; i++)
-			{
-				sb.AppendLine("  " + _devices[i]);
-			}
-			return sb.ToString();
-		}
-
 		public double GetArea()
 		{
 			return Width * Length;
@@ -317,35 +308,37 @@ namespace BuildingSecuritySystem
 			}
 		}
 
-		public void Simulate()
+		public void Simulate(string buildingName, int floorNumber, bool randomize = false)
 		{
 			CheckAllSensors();
 			for (int i = 0; i < _sensorCount; i++)
 			{
 				if (_sensors[i] is TemperatureSensor tempSens && tempSens.IsTriggered)
 				{
-					double currentT = new Random().NextDouble() * 100;
+					double currentT = tempSens.currentTemperature;
 					if (currentT >= tempSens.TemperatureThreshold && currentT < tempSens.TemperatureThreshold2)
 					{
-						SecurityPanel.LogEvent("Temperature above T1 in room. Lamp ON briefly, camera snapshot.");
+						SecurityPanel.LogEvent($"Temperature above T1 in Bldg '{buildingName}', Floor #{floorNumber}, Room '{Name}'. Lamp ON briefly, camera snapshot...");
 						Device lamp = FindDevice<Lamp>();
 						bool wasLampOn = (lamp != null && lamp.IsEnabled);
 						if (lamp != null) lamp.Activate();
+
 						Device camera = FindDevice<Camera>();
 						if (camera != null) camera.Activate();
-						SecurityPanel.LogEvent("Snapshot taken.");
+						SecurityPanel.LogEvent($"Snapshot taken in Bldg '{buildingName}', Floor #{floorNumber}, Room '{Name}'.");
+
 						if (!wasLampOn && lamp != null) lamp.Deactivate();
 						if (camera != null) camera.Deactivate();
 					}
 					else if (tempSens.TemperatureThreshold2 > tempSens.TemperatureThreshold &&
 							 currentT >= tempSens.TemperatureThreshold2)
 					{
-						SecurityPanel.LogEvent("Temperature above T2 in room. Lamp OFF, water ON briefly.");
+						SecurityPanel.LogEvent($"Temperature above T2 in Bldg '{buildingName}', Floor #{floorNumber}, Room '{Name}'. Lamp OFF, water ON briefly.");
 						Device lamp = FindDevice<Lamp>();
 						if (lamp != null) lamp.Deactivate();
 						Device vent = FindDevice<Vent>();
 						if (vent != null) vent.Activate();
-						SecurityPanel.LogEvent("Water flow started.");
+						SecurityPanel.LogEvent($"Water flow started in Bldg '{buildingName}', Floor #{floorNumber}, Room '{Name}'.");
 						if (vent != null) vent.Deactivate();
 					}
 				}
@@ -355,9 +348,9 @@ namespace BuildingSecuritySystem
 					if (lamp != null && !lamp.IsEnabled)
 					{
 						lamp.Activate();
-						SecurityPanel.LogEvent("Movement detected; lamp turned ON briefly.");
+						SecurityPanel.LogEvent($"Movement detected in Bldg '{buildingName}', Floor #{floorNumber}, Room '{Name}'; lamp ON briefly.");
 						lamp.Deactivate();
-						SecurityPanel.LogEvent("Lamp turned OFF again.");
+						SecurityPanel.LogEvent($"Lamp OFF again in Bldg '{buildingName}', Floor #{floorNumber}, Room '{Name}'.");
 					}
 				}
 				else if (_sensors[i] is LightSensor lightSens && lightSens.IsTriggered)
@@ -366,7 +359,7 @@ namespace BuildingSecuritySystem
 					if (camera != null && !camera.IsEnabled)
 					{
 						camera.Activate();
-						SecurityPanel.LogEvent("Light sensor triggered; camera on, snapshot taken.");
+						SecurityPanel.LogEvent($"Light sensor triggered in Bldg '{buildingName}', Floor #{floorNumber}, Room '{Name}'; camera on, snapshot taken.");
 						camera.Deactivate();
 					}
 				}
@@ -380,6 +373,34 @@ namespace BuildingSecuritySystem
 				if (_devices[i] is T dev) return dev;
 			}
 			return null;
+		}
+
+		public override string ToString()
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine($"Room '{Name}' => Width={Width}, Length={Length}, Windows={WindowsCount}, Doors={DoorsCount}, Corridor={IsCorridor}");
+			sb.AppendLine(" Sensors:");
+			for (int i = 0; i < _sensorCount; i++)
+			{
+				sb.AppendLine("  " + _sensors[i]);
+			}
+			sb.AppendLine(" Devices:");
+			for (int i = 0; i < _deviceCount; i++)
+			{
+				sb.AppendLine("  " + _devices[i]);
+			}
+			return sb.ToString();
+		}
+
+		public void ForceTemperature(double newT)
+		{
+			for (int i = 0; i < _sensorCount; i++)
+			{
+				if (_sensors[i] is TemperatureSensor t)
+				{
+					t.ForceTemperature(newT);
+				}
+			}
 		}
 	}
 
@@ -415,7 +436,6 @@ namespace BuildingSecuritySystem
 	{
 		public string Name;
 		private int _floorsCount;
-		protected double _area;
 		private static int _buildingCounter;
 		public static int BuildingCounter => _buildingCounter;
 
@@ -423,12 +443,6 @@ namespace BuildingSecuritySystem
 		{
 			get { return _floorsCount; }
 			set { if (value >= 0) _floorsCount = value; }
-		}
-
-		public double Area
-		{
-			get { return _area; }
-			set { if (value >= 0) _area = value; }
 		}
 
 		public List<Floor> Floors { get; } = new List<Floor>();
@@ -442,15 +456,13 @@ namespace BuildingSecuritySystem
 		{
 			Name = "NoName";
 			_floorsCount = 0;
-			_area = 0.0;
 			_buildingCounter++;
 		}
 
-		public Building(string name, int floors, double area)
+		public Building(string name, int floors)
 		{
 			Name = name;
 			_floorsCount = floors >= 0 ? floors : 0;
-			_area = area >= 0 ? area : 0.0;
 			_buildingCounter++;
 		}
 
@@ -459,7 +471,6 @@ namespace BuildingSecuritySystem
 			if (other == null) throw new ArgumentNullException(nameof(other));
 			this.Name = other.Name;
 			this._floorsCount = other._floorsCount;
-			this._area = other._area;
 			_buildingCounter++;
 		}
 
@@ -467,13 +478,11 @@ namespace BuildingSecuritySystem
 		{
 			Name = "DefaultBuilding";
 			FloorsCount = 1;
-			Area = 100.0;
 		}
-		public void Initialize(string name, int floors, double area)
+		public void Initialize(string name, int floors)
 		{
 			if (!string.IsNullOrWhiteSpace(name)) Name = name;
 			if (floors >= 0) FloorsCount = floors;
-			if (area >= 0) Area = area;
 		}
 
 		public void InputFromConsole()
@@ -494,30 +503,20 @@ namespace BuildingSecuritySystem
 				}
 				Console.WriteLine("Invalid floors count. Please try again.");
 			}
-			while (true)
-			{
-				Console.Write("Enter total building area (>=0): ");
-				if (double.TryParse(Console.ReadLine(), out double tmpArea) && tmpArea >= 0)
-				{
-					Area = tmpArea;
-					break;
-				}
-				Console.WriteLine("Invalid area. Please try again.");
-			}
 		}
 
 		public void OutputToConsole()
 		{
-			Console.WriteLine(this.ToString());
+			Console.WriteLine(ToString());
 		}
 
+		// simplified file I/O (no building area)
 		public void WriteToFile(string filePath)
 		{
 			using (StreamWriter sw = new StreamWriter(filePath, false))
 			{
 				sw.WriteLine(Name);
 				sw.WriteLine(_floorsCount);
-				sw.WriteLine(_area);
 			}
 		}
 
@@ -531,9 +530,6 @@ namespace BuildingSecuritySystem
 				line = sr.ReadLine();
 				if (int.TryParse(line, out int floors) && floors >= 0)
 					_floorsCount = floors;
-				line = sr.ReadLine();
-				if (double.TryParse(line, out double area) && area >= 0)
-					_area = area;
 			}
 		}
 
@@ -544,29 +540,124 @@ namespace BuildingSecuritySystem
 
 		public override string ToString()
 		{
-			return $"Building '{Name}' => Floors: {_floorsCount}, Area: {_area} m^2";
+			return $"Building '{Name}' => Floors: {_floorsCount}";
 		}
 
-		public void AutoCreateFloorsAndRooms()
+		public void InputFloorsAndRoomsFromConsole()
 		{
+			Floors.Clear();
 			for (int i = 1; i <= FloorsCount; i++)
 			{
-				Floor f = new Floor(i, 3.0 + i);
-				int roomsCount = new Random().Next(1, 4);
-				for (int r = 1; r <= roomsCount; r++)
+				Console.WriteLine($"\n--- Enter info for Floor #{i} ---");
+				double floorHeight = 3.0 + i;
+				Console.Write($"Enter Floor {i} Height (default {floorHeight}): ");
+				string tmp = Console.ReadLine();
+				if (double.TryParse(tmp, out double userHeight) && userHeight > 0)
+				{
+					floorHeight = userHeight;
+				}
+
+				Floor floor = new Floor(i, floorHeight);
+
+				int roomCount;
+				while (true)
+				{
+					Console.Write($"How many rooms on Floor #{i}?: ");
+					if (int.TryParse(Console.ReadLine(), out roomCount) && roomCount > 0)
+					{
+						break;
+					}
+					Console.WriteLine("Invalid room count. Try again.");
+				}
+
+				for (int r = 1; r <= roomCount; r++)
 				{
 					Room room = new Room();
-					room.Width = new Random().Next(3, 10);
-					room.Length = new Random().Next(3, 10);
-					room.DoorsCount = new Random().Next(1, 3);
-					room.WindowsCount = new Random().Next(0, 4);
-					room.VolumeUsage = new Random().Next(0, 100);
-					room.IsCorridor = (r == roomsCount && roomsCount > 2);
+					room.Name = $"Floor{i}_Room{r}";
+
+					Console.WriteLine($"  >> Enter data for Room {r}:");
+					Console.Write($"     Room name (default '{room.Name}'): ");
+					string rmName = Console.ReadLine();
+					if (!string.IsNullOrWhiteSpace(rmName)) room.Name = rmName;
+
+					while (true)
+					{
+						Console.Write("     Width (>=1): ");
+						if (double.TryParse(Console.ReadLine(), out double w) && w >= 1)
+						{
+							room.Width = w;
+							break;
+						}
+						Console.WriteLine("     Invalid width. Try again.");
+					}
+
+					while (true)
+					{
+						Console.Write("     Length (>=1): ");
+						if (double.TryParse(Console.ReadLine(), out double l) && l >= 1)
+						{
+							room.Length = l;
+							break;
+						}
+						Console.WriteLine("     Invalid length. Try again.");
+					}
+
+					while (true)
+					{
+						Console.Write("     WindowsCount (>=0): ");
+						if (int.TryParse(Console.ReadLine(), out int wc) && wc >= 0)
+						{
+							room.WindowsCount = wc;
+							break;
+						}
+						Console.WriteLine("     Invalid windows count. Try again.");
+					}
+
+					while (true)
+					{
+						Console.Write("     DoorsCount (>=0): ");
+						if (int.TryParse(Console.ReadLine(), out int dc) && dc >= 0)
+						{
+							room.DoorsCount = dc;
+							break;
+						}
+						Console.WriteLine("     Invalid doors count. Try again.");
+					}
+
+					Console.Write("     Is corridor? (true/false) ");
+					string isCorrStr = Console.ReadLine();
+					if (!string.IsNullOrEmpty(isCorrStr))
+					{
+						bool.TryParse(isCorrStr, out bool corr);
+						room.IsCorridor = corr;
+					}
+
 					room.AutoInstallEquipment();
-					f.AddRoom(room);
+					floor.AddRoom(room);
 				}
-				Floors.Add(f);
+
+				Floors.Add(floor);
 			}
+		}
+
+		// Let user choose which floor/room to start a fire
+		public void StartFire(int floorNumber, int roomNumber, bool severe = false)
+		{
+			if (floorNumber < 1 || floorNumber > Floors.Count)
+			{
+				Console.WriteLine("Invalid floor number!");
+				return;
+			}
+			var floor = Floors[floorNumber - 1];
+			if (roomNumber < 1 || roomNumber > floor.Rooms.Count)
+			{
+				Console.WriteLine("Invalid room number!");
+				return;
+			}
+			var room = floor.Rooms[roomNumber - 1];
+			double fireTemp = severe ? 65.0 : 35.0; // T2-like or T1-like
+			room.ForceTemperature(fireTemp);
+			Console.WriteLine($"Started {(severe ? "severe" : "mild")} fire in Floor#{floorNumber}, Room '{room.Name}'.");
 		}
 
 		public void SimulateAllRooms()
@@ -575,7 +666,7 @@ namespace BuildingSecuritySystem
 			{
 				foreach (var rm in fl.Rooms)
 				{
-					rm.Simulate();
+					rm.Simulate(Name, fl.FloorNumber);
 				}
 			}
 		}
@@ -594,64 +685,77 @@ namespace BuildingSecuritySystem
 	{
 		public static void Main(string[] args)
 		{
-			// 1) Demonstrate default constructor
+			Console.WriteLine("=== DEMO OF BUILDING SECURITY SYSTEM ===");
+
 			Building b1 = new Building();
 			b1.OutputToConsole();
 
-			// 2) Demonstrate param constructor
-			Building b2 = new Building("Office Center", 5, 2500.5);
+			Building b2 = new Building("Office Center", 5);
 			b2.OutputToConsole();
 
-			// 3) Demonstrate copy constructor
 			Building b3 = new Building(b2);
 			b3.Name = "Office Clone";
 			b3.OutputToConsole();
 
-			// 4) Demonstrate overloaded Initialize() methods
-			b1.Initialize();  // sets default
+			b1.Initialize();
 			b1.OutputToConsole();
-			b1.Initialize("Warehouse", 2, 500.0);
+			b1.Initialize("Warehouse", 2);
 			b1.OutputToConsole();
 
-			// 5) Demonstrate console input with validation
+			// Basic building console input (removes area)
 			b1.InputFromConsole();
 			b1.OutputToConsole();
 
-			// 6) Demonstrate file I/O
+			// File IO (no area)
 			string testFile = "building_info.txt";
 			b1.WriteToFile(testFile);
 			Console.WriteLine("Wrote b1 to file.");
 
-			// Re-use b2 to read from that file
 			b2.ReadFromFile(testFile);
-			Console.WriteLine("Read file into b1:");
+			Console.WriteLine("Read file into b2:");
 			b2.OutputToConsole();
 
-			// 7) Demonstrate operator overloading on Room
-			Room r1 = new Room();
-			TemperatureSensor ts = new TemperatureSensor("TempSensor1", 30.0);
-			MovementSensor ms = new MovementSensor("MoveSensor1");
-
-			r1 = r1 + ts;
-			r1 = r1 + ms;
-			// Remove a sensor:
-			// r1 = r1 - ms;
-
-			// Add some devices
+			// Room example
+			Room r1 = new Room { Name = "BigRoom", Width = 5, Length = 6 };
+			r1 = r1 + new TemperatureSensor("TempSensor1", 30.0, 60.0);
+			r1 = r1 + new MovementSensor("MoveSensor1");
 			r1.AddDevice(new Camera("Cam1"));
 			r1.AddDevice(new Lamp("Lamp1"));
-
-			// Check all sensors
 			r1.CheckAllSensors();
 			Console.WriteLine(r1);
 
-			// 8) Demonstrate static field and method usage
-			Building.ShowBuildingCount(); // how many building objects were created
-			Building bigBuilding = new Building("Big Complex", 3, 9999);
-			bigBuilding.AutoCreateFloorsAndRooms();
-			bigBuilding.SimulateAllRooms();
-			Console.WriteLine("Simulation complete. Check SecurityLog.txt for events.");
+			Building.ShowBuildingCount();
 
+			// Creating floors/rooms from console
+			Console.WriteLine("\n=== Build custom building with floors/rooms from console! ===");
+			Building custom = new Building();
+			custom.InputFromConsole();
+			custom.InputFloorsAndRoomsFromConsole();
+			SecurityPanel.LogEvent($"=== RANDOM FIRE GENERATION ===");
+			custom.SimulateAllRooms();
+
+			foreach (var fl in custom.Floors)
+			{
+				foreach (var rm in fl.Rooms)
+				{
+					rm.ForceTemperature(20.0);
+				}
+			}
+
+			// Demonstrate choosing where a fire starts
+			Console.WriteLine("\n=== Manually Start Fire in a Specific Floor/Room ===");
+			Console.Write("Choose Floor # to start fire: ");
+			int userFloor = int.Parse(Console.ReadLine() ?? "1");
+			Console.Write("Choose Room # on that floor: ");
+			int userRoom = int.Parse(Console.ReadLine() ?? "1");
+			Console.Write("Mild or severe fire? (mild/severe): ");
+			string severity = Console.ReadLine();
+			bool severeFire = (severity?.ToLower() == "severe");
+			custom.StartFire(userFloor, userRoom, severeFire);
+			SecurityPanel.LogEvent($"=== USER SPECIFIED FIRE GENERATION ===");
+			custom.SimulateAllRooms();
+
+			Console.WriteLine("Check 'SecurityLog.txt' for logs of triggered events.");
 			Console.WriteLine("\nPress any key to exit...");
 			Console.ReadKey();
 		}
