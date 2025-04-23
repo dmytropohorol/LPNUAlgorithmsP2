@@ -1,10 +1,82 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Text.Json;
 using System.Text;
 
 namespace BuildingSecuritySystem
 {
+	public static class DataExporter
+	{
+		public static void SaveAllInfoAsJson(this Building building, string filePath)
+		{
+			var options = new JsonSerializerOptions
+			{
+				WriteIndented = true,
+			};
+			string json = JsonSerializer.Serialize(building, options);
+			File.WriteAllText(filePath, json, Encoding.UTF8);
+		}
+
+		public static void SaveAllInfoAsCsv(this Building building, string filePath)
+		{
+			var sb = new StringBuilder();
+
+			// Header
+			sb.AppendLine(
+				"BuildingName,FloorNumber,RoomName,ItemType,ItemName,Property1,Property2,IsActive/Triggered"
+			);
+
+			foreach (var floor in building.Floors.Select((f, i) => new { Floor = f, Number = f.FloorNumber }))
+			{
+				foreach (var room in floor.Floor.Rooms)
+				{
+					// Sensors
+					for (int i = 0; i < room._sensorCount; i++)
+					{
+						var s = room._sensors[i];
+						string p1 = "";
+						string p2 = "";
+						if (s is TemperatureSensor ts)
+						{
+							p1 = ts.TemperatureThreshold.ToString();
+							p2 = ts.TemperatureThreshold2.ToString();
+						}
+						else if (s is LightSensor ls)
+						{
+							p1 = ls.LightLevelThreshold.ToString();
+						}
+						// MovementSensor has no extra props
+
+						sb.AppendLine(
+							$"{building.Name}," +
+							$"{floor.Number}," +
+							$"{room.Name}," +
+							$"Sensor," +
+							$"{s.Name}," +
+							$"{p1}," +
+							$"{p2}," +
+							$"{s.IsTriggered}"
+						);
+					}
+
+					// Devices
+					for (int i = 0; i < room._deviceCount; i++)
+					{
+						var d = room._devices[i];
+						sb.AppendLine(
+							$"{building.Name}," +
+							$"{floor.Number}," +
+							$"{room.Name}," +
+							$"Device," +
+							$"{d.Name},,," +
+							$"{d.IsEnabled}"
+						);
+					}
+				}
+			}
+
+			File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+		}
+	}
+
 	// 1) BASE ABSTRACT CLASS FOR THE THEME
 	public abstract class SecurityItem
 	{
@@ -966,6 +1038,10 @@ namespace BuildingSecuritySystem
 					Console.WriteLine($"Floor[\"{firstRoomName}\"] => {namedRoom?.Name}");
 				}
 			}
+
+			custom.SaveAllInfoAsCsv("building_full_export.csv");
+			custom.SaveAllInfoAsJson("building_full_export.json");
+			Console.WriteLine("Exported full info to CSV and JSON.");
 
 			Console.WriteLine("Check 'SecurityLog.txt' for logs of triggered events.");
 			Console.WriteLine("\nPress any key to exit...");
