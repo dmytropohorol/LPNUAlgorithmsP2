@@ -1,0 +1,15 @@
+D:\uni\LPNUAlgorithmsP2\Lab9dmytropohorol\Lab9dmytropohorol\bin\Debug\net8.0\Lab9dmytropohorol.exe
+D:\uni\LPNUAlgorithmsP2\Lab9dmytropohorol\Lab9dmytropohorol\bin\Debug\net8.0\Lab9dmytropohorol.deps.json
+D:\uni\LPNUAlgorithmsP2\Lab9dmytropohorol\Lab9dmytropohorol\bin\Debug\net8.0\Lab9dmytropohorol.runtimeconfig.json
+D:\uni\LPNUAlgorithmsP2\Lab9dmytropohorol\Lab9dmytropohorol\bin\Debug\net8.0\Lab9dmytropohorol.dll
+D:\uni\LPNUAlgorithmsP2\Lab9dmytropohorol\Lab9dmytropohorol\bin\Debug\net8.0\Lab9dmytropohorol.pdb
+D:\uni\LPNUAlgorithmsP2\Lab9dmytropohorol\Lab9dmytropohorol\obj\Debug\net8.0\Lab9dmytropohorol.GeneratedMSBuildEditorConfig.editorconfig
+D:\uni\LPNUAlgorithmsP2\Lab9dmytropohorol\Lab9dmytropohorol\obj\Debug\net8.0\Lab9dmytropohorol.AssemblyInfoInputs.cache
+D:\uni\LPNUAlgorithmsP2\Lab9dmytropohorol\Lab9dmytropohorol\obj\Debug\net8.0\Lab9dmytropohorol.AssemblyInfo.cs
+D:\uni\LPNUAlgorithmsP2\Lab9dmytropohorol\Lab9dmytropohorol\obj\Debug\net8.0\Lab9dmytropohorol.csproj.CoreCompileInputs.cache
+D:\uni\LPNUAlgorithmsP2\Lab9dmytropohorol\Lab9dmytropohorol\obj\Debug\net8.0\Lab9dmytropohorol.sourcelink.json
+D:\uni\LPNUAlgorithmsP2\Lab9dmytropohorol\Lab9dmytropohorol\obj\Debug\net8.0\Lab9dmytropohorol.dll
+D:\uni\LPNUAlgorithmsP2\Lab9dmytropohorol\Lab9dmytropohorol\obj\Debug\net8.0\refint\Lab9dmytropohorol.dll
+D:\uni\LPNUAlgorithmsP2\Lab9dmytropohorol\Lab9dmytropohorol\obj\Debug\net8.0\Lab9dmytropohorol.pdb
+D:\uni\LPNUAlgorithmsP2\Lab9dmytropohorol\Lab9dmytropohorol\obj\Debug\net8.0\Lab9dmytropohorol.genruntimeconfig.cache
+D:\uni\LPNUAlgorithmsP2\Lab9dmytropohorol\Lab9dmytropohorol\obj\Debug\net8.0\ref\Lab9dmytropohorol.dll
