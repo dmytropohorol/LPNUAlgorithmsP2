@@ -1,0 +1,1051 @@
+﻿using System.Text.Json;
+using System.Text;
+
+namespace BuildingSecuritySystem
+{
+	public static class DataExporter
+	{
+		public static void SaveAllInfoAsJson(this Building building, string filePath)
+		{
+			var options = new JsonSerializerOptions
+			{
+				WriteIndented = true,
+			};
+			string json = JsonSerializer.Serialize(building, options);
+			File.WriteAllText(filePath, json, Encoding.UTF8);
+		}
+
+		public static void SaveAllInfoAsCsv(this Building building, string filePath)
+		{
+			var sb = new StringBuilder();
+
+			// Header
+			sb.AppendLine(
+				"BuildingName,FloorNumber,RoomName,ItemType,ItemName,Property1,Property2,IsActive/Triggered"
+			);
+
+			foreach (var floor in building.Floors.Select((f, i) => new { Floor = f, Number = f.FloorNumber }))
+			{
+				foreach (var room in floor.Floor.Rooms)
+				{
+					// Sensors
+					for (int i = 0; i < room._sensorCount; i++)
+					{
+						var s = room._sensors[i];
+						string p1 = "";
+						string p2 = "";
+						if (s is TemperatureSensor ts)
+						{
+							p1 = ts.TemperatureThreshold.ToString();
+							p2 = ts.TemperatureThreshold2.ToString();
+						}
+						else if (s is LightSensor ls)
+						{
+							p1 = ls.LightLevelThreshold.ToString();
+						}
+						// MovementSensor has no extra props
+
+						sb.AppendLine(
+							$"{building.Name}," +
+							$"{floor.Number}," +
+							$"{room.Name}," +
+							$"Sensor," +
+							$"{s.Name}," +
+							$"{p1}," +
+							$"{p2}," +
+							$"{s.IsTriggered}"
+						);
+					}
+
+					// Devices
+					for (int i = 0; i < room._deviceCount; i++)
+					{
+						var d = room._devices[i];
+						sb.AppendLine(
+							$"{building.Name}," +
+							$"{floor.Number}," +
+							$"{room.Name}," +
+							$"Device," +
+							$"{d.Name},,," +
+							$"{d.IsEnabled}"
+						);
+					}
+				}
+			}
+
+			File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+		}
+	}
+
+	// 1) BASE ABSTRACT CLASS FOR THE THEME
+	public abstract class SecurityItem
+	{
+		public string Name { get; set; }
+
+		public SecurityItem()
+		{
+			Name = "UnknownItem";
+		}
+
+		public SecurityItem(string name)
+		{
+			Name = name;
+		}
+
+		public override string ToString()
+		{
+			return $"SecurityItem: {Name}";
+		}
+	}
+
+	// 2) ABSTRACT CLASSES THAT GROUP ITEMS (SENSORS & DEVICES)
+	public abstract class Sensor : SecurityItem
+	{
+		public bool IsTriggered { get; protected set; }
+
+		public Sensor() : base() { }
+		public Sensor(string name) : base(name) { }
+
+		public abstract void CheckSensor();
+
+		public override string ToString()
+		{
+			return $"Sensor: {Name}, Triggered: {IsTriggered}";
+		}
+	}
+
+	public abstract class Device : SecurityItem, IRepairable
+	{
+		public bool IsEnabled { get; protected set; }
+
+		public Device() : base() { }
+		public Device(string name) : base(name) { }
+
+		public abstract void Activate();
+		public abstract void Deactivate();
+
+		// Part of the IRepairable interface
+		public abstract void Repair();
+
+		public override string ToString()
+		{
+			return $"Device: {Name}, Enabled: {IsEnabled}";
+		}
+	}
+
+	// 2.1) INTERFACE(S) FOR SEPARATE CLASSES
+	public interface IRepairable
+	{
+		void Repair();
+	}
+
+	// CONCRETE SENSOR CLASSES
+	public class TemperatureSensor : Sensor
+	{
+		public double TemperatureThreshold { get; set; }
+		public double TemperatureThreshold2 { get; set; }
+		public double CurrentTemperature { get; set; }
+
+		public TemperatureSensor(string name, double threshold)
+			: base(name)
+		{
+			TemperatureThreshold = threshold;
+			IsTriggered = false;
+		}
+
+		public TemperatureSensor(string name, double threshold1, double threshold2)
+			: base(name)
+		{
+			TemperatureThreshold = threshold1;
+			TemperatureThreshold2 = threshold2;
+			IsTriggered = false;
+			CurrentTemperature = new Random().NextDouble() * 100;
+		}
+
+		public override void CheckSensor()
+		{
+			if (CurrentTemperature >= TemperatureThreshold)
+			{
+				IsTriggered = true;
+			}
+			if (TemperatureThreshold2 > TemperatureThreshold && CurrentTemperature >= TemperatureThreshold2)
+			{
+				IsTriggered = true;
+			}
+		}
+
+		public void ForceTemperature(double forcedValue)
+		{
+			CurrentTemperature = forcedValue;
+			IsTriggered = false; // Will re-check in CheckSensor()
+		}
+	}
+
+	public class LightSensor : Sensor
+	{
+		public int LightLevelThreshold { get; set; }
+
+		public LightSensor(string name, int threshold)
+			: base(name)
+		{
+			LightLevelThreshold = threshold;
+			IsTriggered = false;
+		}
+
+		public override void CheckSensor()
+		{
+			int currentLight = new Random().Next(0, 101);
+			if (currentLight >= LightLevelThreshold)
+			{
+				IsTriggered = true;
+			}
+		}
+	}
+
+	public class MovementSensor : Sensor
+	{
+		public MovementSensor(string name)
+			: base(name)
+		{
+			IsTriggered = false;
+		}
+
+		public override void CheckSensor()
+		{
+			IsTriggered = (new Random().Next(0, 10) > 6);
+		}
+	}
+
+	// CONCRETE DEVICE CLASSES
+	public class Camera : Device
+	{
+		public Camera(string name) : base(name)
+		{
+			IsEnabled = false;
+		}
+
+		public override void Activate()
+		{
+			IsEnabled = true;
+		}
+
+		public override void Deactivate()
+		{
+			IsEnabled = false;
+		}
+
+		public override void Repair()
+		{
+			Console.WriteLine($"{Name} is undergoing camera maintenance...");
+		}
+	}
+
+	public class Vent : Device
+	{
+		public Vent(string name) : base(name)
+		{
+			IsEnabled = false;
+		}
+
+		public override void Activate()
+		{
+			IsEnabled = true;
+		}
+
+		public override void Deactivate()
+		{
+			IsEnabled = false;
+		}
+
+		public override void Repair()
+		{
+			Console.WriteLine($"{Name} is having its fan and airflow system repaired...");
+		}
+	}
+
+	public class Lamp : Device
+	{
+		public Lamp(string name) : base(name)
+		{
+			IsEnabled = false;
+		}
+
+		public override void Activate()
+		{
+			IsEnabled = true;
+		}
+
+		public override void Deactivate()
+		{
+			IsEnabled = false;
+		}
+
+		public override void Repair()
+		{
+			Console.WriteLine($"{Name} is being checked for burned-out bulbs...");
+		}
+	}
+
+	// 3) SEALED (GERMETIZOVAN) CLASSES
+	public sealed class SealedLamp : Lamp
+	{
+		public SealedLamp(string name) : base(name) { }
+
+		// Example of a specific method for the sealed class
+		public void SpecialSealedLampMethod()
+		{
+			Console.WriteLine($"SealedLamp '{Name}': specialized lighting action!");
+		}
+	}
+
+	public sealed class SealedVent : Vent
+	{
+		public SealedVent(string name) : base(name) { }
+
+		// Another specific method for the sealed class
+		public void SpecialSealedVentMethod()
+		{
+			Console.WriteLine($"SealedVent '{Name}': specialized venting action!");
+		}
+	}
+
+	public class Room
+	{
+		private const int MaxSensors = 20;
+		private const int MaxDevices = 20;
+
+		// Internal arrays for storing sensors/devices
+		internal Sensor[] _sensors;
+		internal Device[] _devices;
+		internal int _sensorCount;
+		internal int _deviceCount;
+
+		public string Name { get; set; }
+		public double Width { get; set; }
+		public double Length { get; set; }
+		public int WindowsCount { get; set; }
+		public int DoorsCount { get; set; }
+		public bool IsCorridor { get; set; }
+
+		public Room()
+		{
+			_sensors = new Sensor[MaxSensors];
+			_devices = new Device[MaxDevices];
+			_sensorCount = 0;
+			_deviceCount = 0;
+		}
+
+		// Operator overloading for adding/removing single sensors/devices
+		public static Room operator +(Room r, Sensor s)
+		{
+			r.AddSensor(s);
+			return r;
+		}
+		public static Room operator -(Room r, Sensor s)
+		{
+			r.RemoveSensor(s);
+			return r;
+		}
+		public static Room operator +(Room r, Device d)
+		{
+			r.AddDevice(d);
+			return r;
+		}
+		public static Room operator -(Room r, Device d)
+		{
+			r.RemoveDevice(d);
+			return r;
+		}
+
+		// 2) ARITHMETIC / LOGICAL OPERATORS FOR THE DEMO
+		// Compare rooms by area
+		public static bool operator >(Room a, Room b) => a.GetArea() > b.GetArea();
+		public static bool operator <(Room a, Room b) => a.GetArea() < b.GetArea();
+		public static bool operator >=(Room a, Room b) => a.GetArea() >= b.GetArea();
+		public static bool operator <=(Room a, Room b) => a.GetArea() <= b.GetArea();
+
+		// Combine two rooms into a new one (merging dimensions, sensors, devices)
+		public static Room operator +(Room a, Room b)
+		{
+			Room merged = new Room
+			{
+				Name = a.Name + "_" + b.Name,
+				Width = a.Width + b.Width,   // sum widths for demonstration
+				Length = Math.Max(a.Length, b.Length), // pick the larger length
+				WindowsCount = a.WindowsCount + b.WindowsCount,
+				DoorsCount = a.DoorsCount + b.DoorsCount,
+				IsCorridor = a.IsCorridor && b.IsCorridor
+			};
+
+			// Copy sensors/devices from 'a'
+			for (int i = 0; i < a._sensorCount; i++)
+				merged.AddSensor(a._sensors[i]);
+			for (int i = 0; i < a._deviceCount; i++)
+				merged.AddDevice(a._devices[i]);
+
+			// Copy sensors/devices from 'b'
+			for (int i = 0; i < b._sensorCount; i++)
+				merged.AddSensor(b._sensors[i]);
+			for (int i = 0; i < b._deviceCount; i++)
+				merged.AddDevice(b._devices[i]);
+
+			return merged;
+		}
+
+		// Helper methods
+		public void AddSensor(Sensor sensor)
+		{
+			if (_sensorCount < MaxSensors && sensor != null)
+			{
+				_sensors[_sensorCount++] = sensor;
+			}
+		}
+
+		public void RemoveSensor(Sensor sensor)
+		{
+			if (sensor == null) return;
+			for (int i = 0; i < _sensorCount; i++)
+			{
+				if (_sensors[i] == sensor)
+				{
+					for (int j = i; j < _sensorCount - 1; j++)
+					{
+						_sensors[j] = _sensors[j + 1];
+					}
+					_sensors[_sensorCount - 1] = null;
+					_sensorCount--;
+					break;
+				}
+			}
+		}
+
+		public void AddDevice(Device device)
+		{
+			if (_deviceCount < MaxDevices && device != null)
+			{
+				_devices[_deviceCount++] = device;
+			}
+		}
+
+		public void RemoveDevice(Device device)
+		{
+			if (device == null) return;
+			for (int i = 0; i < _deviceCount; i++)
+			{
+				if (_devices[i] == device)
+				{
+					for (int j = i; j < _deviceCount - 1; j++)
+					{
+						_devices[j] = _devices[j + 1];
+					}
+					_devices[_deviceCount - 1] = null;
+					_deviceCount--;
+					break;
+				}
+			}
+		}
+
+		public void CheckAllSensors()
+		{
+			for (int i = 0; i < _sensorCount; i++)
+			{
+				_sensors[i].CheckSensor();
+			}
+		}
+
+		public double GetArea()
+		{
+			return Width * Length;
+		}
+
+		// Automatic installations as an example
+		public void AutoInstallEquipment()
+		{
+			double area = GetArea();
+			int neededTempSensors = (int)Math.Ceiling(area / 9.0);
+			int neededVents = (int)Math.Ceiling(area / 4.0);
+			int neededCamerasByArea = (int)Math.Ceiling(area / 16.0);
+			int neededCamerasByDoors = DoorsCount < 1 ? 1 : DoorsCount;
+			int totalCameras = Math.Max(neededCamerasByArea, neededCamerasByDoors);
+
+			if (!IsCorridor)
+			{
+				for (int i = 0; i < neededTempSensors; i++)
+				{
+					AddSensor(new TemperatureSensor("TempSensor_" + (i + 1), 30, 60));
+				}
+				for (int i = 0; i < neededVents; i++)
+				{
+					AddDevice(new Vent("Vent_" + (i + 1)));
+				}
+				for (int i = 0; i < totalCameras; i++)
+				{
+					Camera cam = new Camera("Camera_" + (i + 1));
+					AddDevice(cam);
+					AddSensor(new LightSensor("LightSensor_for_" + cam.Name, 50));
+				}
+				for (int i = 0; i < DoorsCount; i++)
+				{
+					AddSensor(new MovementSensor("MoveSensor_door_" + (i + 1)));
+				}
+			}
+			else
+			{
+				int neededTempCorrSensors = (int)Math.Ceiling(area / 9.0);
+				int neededCorrVents = (int)Math.Ceiling(area / 4.0);
+				for (int i = 0; i < neededTempCorrSensors; i++)
+				{
+					AddSensor(new TemperatureSensor("Corr_Temp_" + (i + 1), 30, 60));
+				}
+				for (int i = 0; i < neededCorrVents; i++)
+				{
+					AddDevice(new Vent("Corr_Vent_" + (i + 1)));
+				}
+				for (int i = 0; i < DoorsCount; i++)
+				{
+					Camera cam = new Camera("Corr_Camera_Door_" + (i + 1));
+					AddDevice(cam);
+					AddSensor(new LightSensor("Corr_LightSensor_Door_" + (i + 1), 50));
+					AddSensor(new MovementSensor("Corr_MoveSensor_Door_" + (i + 1)));
+				}
+			}
+		}
+
+		// Polymorphic method demonstration
+		public void Simulate(string buildingName, int floorNumber, bool randomize = false)
+		{
+			CheckAllSensors();
+			for (int i = 0; i < _sensorCount; i++)
+			{
+				if (_sensors[i] is TemperatureSensor tempSens && tempSens.IsTriggered)
+				{
+					double currentT = tempSens.CurrentTemperature;
+					if (currentT >= tempSens.TemperatureThreshold && currentT < tempSens.TemperatureThreshold2)
+					{
+						SecurityPanel.LogEvent($"Temperature above T1 in Building '{buildingName}', Floor #{floorNumber}, Room '{Name}', fixed by sensor '{tempSens.Name}'. Lamp ON briefly, camera snapshot...");
+						Device lamp = FindDevice<Lamp>();
+						bool wasLampOn = (lamp != null && lamp.IsEnabled);
+						if (lamp != null) lamp.Activate();
+
+						Device camera = FindDevice<Camera>();
+						if (camera != null) camera.Activate();
+						SecurityPanel.LogEvent($"Snapshot taken in Building '{buildingName}', Floor #{floorNumber}, Room '{Name}'.");
+
+						if (!wasLampOn && lamp != null) lamp.Deactivate();
+						if (camera != null) camera.Deactivate();
+					}
+					else if (tempSens.TemperatureThreshold2 > tempSens.TemperatureThreshold &&
+							 currentT >= tempSens.TemperatureThreshold2)
+					{
+						SecurityPanel.LogEvent($"Temperature above T2 in Building '{buildingName}', Floor #{floorNumber}, Room '{Name}', fixed by sensor '{tempSens.Name}'. Lamp OFF, water ON briefly.");
+						Device lamp = FindDevice<Lamp>();
+						if (lamp != null) lamp.Deactivate();
+						Device vent = FindDevice<Vent>();
+						if (vent != null) vent.Activate();
+						SecurityPanel.LogEvent($"Water flow started in Building '{buildingName}', Floor #{floorNumber}, Room '{Name}'.");
+						if (vent != null) vent.Deactivate();
+					}
+				}
+				else if (_sensors[i] is MovementSensor moveSens && moveSens.IsTriggered)
+				{
+					Device lamp = FindDevice<Lamp>();
+					if (lamp != null && !lamp.IsEnabled)
+					{
+						lamp.Activate();
+						SecurityPanel.LogEvent($"Movement detected in Building '{buildingName}', Floor #{floorNumber}, Room '{Name}'; lamp ON briefly.");
+						lamp.Deactivate();
+						SecurityPanel.LogEvent($"Lamp OFF again in Building '{buildingName}', Floor #{floorNumber}, Room '{Name}'.");
+					}
+				}
+				else if (_sensors[i] is LightSensor lightSens && lightSens.IsTriggered)
+				{
+					Device camera = FindDevice<Camera>();
+					if (camera != null && !camera.IsEnabled)
+					{
+						camera.Activate();
+						SecurityPanel.LogEvent($"Light sensor triggered in Building '{buildingName}', Floor #{floorNumber}, Room '{Name}'; camera on, snapshot taken.");
+						camera.Deactivate();
+					}
+				}
+			}
+		}
+
+		private T FindDevice<T>() where T : Device
+		{
+			for (int i = 0; i < _deviceCount; i++)
+			{
+				if (_devices[i] is T dev) return dev;
+			}
+			return null;
+		}
+
+		public override string ToString()
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine($"Room '{Name}' => Width={Width}, Length={Length}, Windows={WindowsCount}, Doors={DoorsCount}, Corridor={IsCorridor}");
+			sb.AppendLine(" Sensors:");
+			for (int i = 0; i < _sensorCount; i++)
+			{
+				sb.AppendLine("  " + _sensors[i]);
+			}
+			sb.AppendLine(" Devices:");
+			for (int i = 0; i < _deviceCount; i++)
+			{
+				sb.AppendLine("  " + _devices[i]);
+			}
+			return sb.ToString();
+		}
+
+		public void ForceTemperature(double newT)
+		{
+			for (int i = 0; i < _sensorCount; i++)
+			{
+				if (_sensors[i] is TemperatureSensor t)
+				{
+					t.ForceTemperature(newT);
+				}
+			}
+		}
+	}
+
+	public class Floor
+	{
+		public int FloorNumber { get; set; }
+		public double FloorHeight { get; set; }
+		public List<Room> Rooms { get; } = new List<Room>();
+
+		public Floor(int floorNum)
+		{
+			FloorNumber = floorNum;
+		}
+
+		public Floor(int floorNum, double height)
+		{
+			FloorNumber = floorNum;
+			FloorHeight = height;
+		}
+
+		// 1) INDEXERS FOR COLLECTION => PART OF THE TASK
+		//    (1) by integer index
+		public Room this[int index]
+		{
+			get
+			{
+				if (index < 0 || index >= Rooms.Count) return null;
+				return Rooms[index];
+			}
+			set
+			{
+				if (index >= 0 && index < Rooms.Count)
+					Rooms[index] = value;
+			}
+		}
+
+		//    (2) by string => treat as an “associative array” by room name
+		public Room this[string roomName]
+		{
+			get
+			{
+				return Rooms.Find(r => r.Name == roomName);
+			}
+			set
+			{
+				int idx = Rooms.FindIndex(r => r.Name == roomName);
+				if (idx >= 0)
+					Rooms[idx] = value;
+			}
+		}
+
+		public void AddRoom(Room r)
+		{
+			Rooms.Add(r);
+		}
+
+		public override string ToString()
+		{
+			return $"Floor #{FloorNumber}, Height={FloorHeight}";
+		}
+	}
+
+	public class Building
+	{
+		public string Name;
+		private int _floorsCount;
+		private static int _buildingCounter;
+		public static int BuildingCounter => _buildingCounter;
+
+		public int FloorsCount
+		{
+			get { return _floorsCount; }
+			set { if (value >= 0) _floorsCount = value; }
+		}
+
+		public List<Floor> Floors { get; } = new List<Floor>();
+
+		static Building()
+		{
+			_buildingCounter = 0;
+		}
+
+		public Building()
+		{
+			Name = "NoName";
+			_floorsCount = 0;
+			_buildingCounter++;
+		}
+
+		public Building(string name, int floors)
+		{
+			Name = name;
+			_floorsCount = floors >= 0 ? floors : 0;
+			_buildingCounter++;
+		}
+
+		public Building(Building other)
+		{
+			if (other == null) throw new ArgumentNullException(nameof(other));
+			this.Name = other.Name;
+			this._floorsCount = other._floorsCount;
+			_buildingCounter++;
+		}
+
+		public void Initialize()
+		{
+			Name = "DefaultBuilding";
+			FloorsCount = 1;
+		}
+
+		public void Initialize(string name, int floors)
+		{
+			if (!string.IsNullOrWhiteSpace(name)) Name = name;
+			if (floors >= 0) FloorsCount = floors;
+		}
+
+		public void InputFromConsole()
+		{
+			Console.Write("Enter Building Name: ");
+			string tmpName = Console.ReadLine();
+			if (!string.IsNullOrWhiteSpace(tmpName))
+			{
+				Name = tmpName;
+			}
+			while (true)
+			{
+				Console.Write("Enter number of floors (>=0): ");
+				if (int.TryParse(Console.ReadLine(), out int tmpFloors) && tmpFloors >= 0)
+				{
+					FloorsCount = tmpFloors;
+					break;
+				}
+				Console.WriteLine("Invalid floors count. Please try again.");
+			}
+		}
+
+		public void OutputToConsole()
+		{
+			Console.WriteLine(ToString());
+		}
+
+		// Simplified file I/O
+		public void WriteToFile(string filePath)
+		{
+			using (StreamWriter sw = new StreamWriter(filePath, false))
+			{
+				sw.WriteLine(Name);
+				sw.WriteLine(_floorsCount);
+			}
+		}
+
+		public void ReadFromFile(string filePath)
+		{
+			if (!File.Exists(filePath)) return;
+			using (StreamReader sr = new StreamReader(filePath))
+			{
+				string line = sr.ReadLine();
+				if (!string.IsNullOrWhiteSpace(line)) Name = line;
+				line = sr.ReadLine();
+				if (int.TryParse(line, out int floors) && floors >= 0)
+					_floorsCount = floors;
+			}
+		}
+
+		public static void ShowBuildingCount()
+		{
+			Console.WriteLine($"Total Building instances created: {_buildingCounter}");
+		}
+
+		public override string ToString()
+		{
+			return $"Building '{Name}' => Floors: {_floorsCount}";
+		}
+
+		public void InputFloorsAndRoomsFromConsole()
+		{
+			Floors.Clear();
+			for (int i = 1; i <= FloorsCount; i++)
+			{
+				Console.WriteLine($"\n--- Enter info for Floor #{i} ---");
+				double floorHeight = 3.0 + i;
+				Console.Write($"Enter Floor {i} Height (default {floorHeight}): ");
+				string tmp = Console.ReadLine();
+				if (double.TryParse(tmp, out double userHeight) && userHeight > 0)
+				{
+					floorHeight = userHeight;
+				}
+
+				Floor floor = new Floor(i, floorHeight);
+
+				int roomCount;
+				while (true)
+				{
+					Console.Write($"How many rooms on Floor #{i}?: ");
+					if (int.TryParse(Console.ReadLine(), out roomCount) && roomCount > 0)
+					{
+						break;
+					}
+					Console.WriteLine("Invalid room count. Try again.");
+				}
+
+				for (int r = 1; r <= roomCount; r++)
+				{
+					Room room = new Room();
+					room.Name = $"Floor{i}_Room{r}";
+
+					Console.WriteLine($"  >> Enter data for Room {r}:");
+					Console.Write($"     Room name (default '{room.Name}'): ");
+					string rmName = Console.ReadLine();
+					if (!string.IsNullOrWhiteSpace(rmName)) room.Name = rmName;
+
+					while (true)
+					{
+						Console.Write("     Width (>=1): ");
+						if (double.TryParse(Console.ReadLine(), out double w) && w >= 1)
+						{
+							room.Width = w;
+							break;
+						}
+						Console.WriteLine("     Invalid width. Try again.");
+					}
+
+					while (true)
+					{
+						Console.Write("     Length (>=1): ");
+						if (double.TryParse(Console.ReadLine(), out double l) && l >= 1)
+						{
+							room.Length = l;
+							break;
+						}
+						Console.WriteLine("     Invalid length. Try again.");
+					}
+
+					while (true)
+					{
+						Console.Write("     WindowsCount (>=0): ");
+						if (int.TryParse(Console.ReadLine(), out int wc) && wc >= 0)
+						{
+							room.WindowsCount = wc;
+							break;
+						}
+						Console.WriteLine("     Invalid windows count. Try again.");
+					}
+
+					while (true)
+					{
+						Console.Write("     DoorsCount (>=0): ");
+						if (int.TryParse(Console.ReadLine(), out int dc) && dc >= 0)
+						{
+							room.DoorsCount = dc;
+							break;
+						}
+						Console.WriteLine("     Invalid doors count. Try again.");
+					}
+
+					Console.Write("     Is corridor? (true/false) ");
+					string isCorrStr = Console.ReadLine();
+					if (!string.IsNullOrEmpty(isCorrStr))
+					{
+						bool.TryParse(isCorrStr, out bool corr);
+						room.IsCorridor = corr;
+					}
+
+					// Automatically install devices/sensors
+					room.AutoInstallEquipment();
+					floor.AddRoom(room);
+				}
+
+				Floors.Add(floor);
+			}
+		}
+
+		// Simulate a "fire" by forcing a high temperature
+		public void StartFire(int floorNumber, int roomNumber, bool severe = false)
+		{
+			if (floorNumber < 1 || floorNumber > Floors.Count)
+			{
+				Console.WriteLine("Invalid floor number!");
+				return;
+			}
+			var floor = Floors[floorNumber - 1];
+			if (roomNumber < 1 || roomNumber > floor.Rooms.Count)
+			{
+				Console.WriteLine("Invalid room number!");
+				return;
+			}
+			var room = floor.Rooms[roomNumber - 1];
+			double fireTemp = severe ? 65.0 : 35.0; // T2-like or T1-like
+			room.ForceTemperature(fireTemp);
+			Console.WriteLine($"Started {(severe ? "severe" : "mild")} fire in Floor#{floorNumber}, Room '{room.Name}'.");
+		}
+
+		public void SimulateAllRooms()
+		{
+			foreach (var fl in Floors)
+			{
+				foreach (var rm in fl.Rooms)
+				{
+					rm.Simulate(Name, fl.FloorNumber);
+				}
+			}
+		}
+	}
+
+	public static class SecurityPanel
+	{
+		public static void LogEvent(string info)
+		{
+			string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+			File.AppendAllText("SecurityLog.txt", $"[{timestamp}] {info}{Environment.NewLine}");
+		}
+	}
+
+	// 4) MAIN PROGRAM TO DEMONSTRATE EVERYTHING
+	public class Pult
+	{
+		public static void Main(string[] args)
+		{
+			Console.WriteLine("=== DEMO OF BUILDING SECURITY SYSTEM ===");
+
+			Building b1 = new Building();
+			b1.OutputToConsole();
+
+			Building b2 = new Building("Office Center", 5);
+			b2.OutputToConsole();
+
+			Building b3 = new Building(b2);
+			b3.Name = "Office Clone";
+			b3.OutputToConsole();
+
+			b1.Initialize();
+			b1.OutputToConsole();
+			b1.Initialize("Warehouse", 2);
+			b1.OutputToConsole();
+
+			// Basic building console input
+			b1.InputFromConsole();
+			b1.OutputToConsole();
+
+			// File IO
+			string testFile = "building_info.txt";
+			b1.WriteToFile(testFile);
+			Console.WriteLine("Wrote b1 to file.");
+
+			b2.ReadFromFile(testFile);
+			Console.WriteLine("Read file into b2:");
+			b2.OutputToConsole();
+
+			// Room example + operator overloading demonstration
+			Room r1 = new Room { Name = "BigRoom", Width = 5, Length = 6 };
+			r1 = r1 + new TemperatureSensor("TempSensor1", 30.0, 60.0);
+			r1 = r1 + new MovementSensor("MoveSensor1");
+			r1.AddDevice(new Camera("Cam1"));
+			r1.AddDevice(new Lamp("Lamp1"));
+			r1.CheckAllSensors();
+			Console.WriteLine(r1);
+
+			// Let's create another Room and compare/merge them
+			Room r2 = new Room { Name = "SmallRoom", Width = 3, Length = 3 };
+			Console.WriteLine($"r1 area={r1.GetArea()}, r2 area={r2.GetArea()}");
+			if (r1 > r2)
+			{
+				Console.WriteLine($"{r1.Name} is bigger than {r2.Name}");
+			}
+			Room mergedRoom = r1 + r2; // operator +
+			Console.WriteLine($"Merged room name: {mergedRoom.Name}, area={mergedRoom.GetArea()}");
+
+			Building.ShowBuildingCount();
+
+			// Creating floors/rooms from console
+			Console.WriteLine("\n=== Build custom building with floors/rooms from console! ===");
+			Building custom = new Building();
+			custom.InputFromConsole();
+			custom.InputFloorsAndRoomsFromConsole();
+			SecurityPanel.LogEvent($"=== RANDOM FIRE GENERATION ===");
+			custom.SimulateAllRooms();
+
+			// Reset temperature for demonstration
+			foreach (var fl in custom.Floors)
+			{
+				foreach (var rm in fl.Rooms)
+				{
+					rm.ForceTemperature(20.0);
+				}
+			}
+
+			// Demonstrate choosing where a fire starts
+			Console.WriteLine("\n=== Manually Start Fire in a Specific Floor/Room ===");
+			Console.Write("Choose Floor # to start fire: ");
+			int userFloor = int.Parse(Console.ReadLine() ?? "1");
+			Console.Write("Choose Room # on that floor: ");
+			int userRoom = int.Parse(Console.ReadLine() ?? "1");
+			Console.Write("Mild or severe fire? (mild/severe): ");
+			string severity = Console.ReadLine();
+			bool severeFire = (severity?.ToLower() == "severe");
+			custom.StartFire(userFloor, userRoom, severeFire);
+			SecurityPanel.LogEvent($"=== USER SPECIFIED FIRE GENERATION ===");
+			custom.SimulateAllRooms();
+
+			// 4.1) DEMONSTRATION OF SEALED CLASSES & INTERFACE
+			Console.WriteLine("\n=== Testing Sealed Classes and IRepairable Interface ===");
+			SealedLamp sl = new SealedLamp("SealedLamp1");
+			sl.Activate();
+			Console.WriteLine($"IsEnabled after Activate(): {sl.IsEnabled}");
+			sl.Repair(); // from the IRepairable interface
+			sl.SpecialSealedLampMethod();
+			sl.Deactivate();
+			Console.WriteLine($"IsEnabled after Deactivate(): {sl.IsEnabled}");
+
+			SealedVent sv = new SealedVent("SealedVent1");
+			sv.Activate();
+			Console.WriteLine($"IsEnabled after Activate(): {sv.IsEnabled}");
+			sv.Repair();
+			sv.SpecialSealedVentMethod();
+			sv.Deactivate();
+			Console.WriteLine($"IsEnabled after Deactivate(): {sv.IsEnabled}");
+
+			// 1) DEMONSTRATION OF THE FLOOR INDEXERS
+			if (custom.Floors.Count > 0)
+			{
+				Floor someFloor = custom.Floors[0];
+				Console.WriteLine($"\n=== Indexer Demo on Floor #{someFloor.FloorNumber} ===");
+				if (someFloor.Rooms.Count > 0)
+				{
+					Room zeroIndexRoom = someFloor[0]; // indexer by integer
+					Console.WriteLine($"Floor index[0] => {zeroIndexRoom?.Name}");
+
+					// Suppose we know that room's name, we can fetch it by string
+					string firstRoomName = zeroIndexRoom?.Name;
+					Room namedRoom = someFloor[firstRoomName];
+					Console.WriteLine($"Floor[\"{firstRoomName}\"] => {namedRoom?.Name}");
+				}
+			}
+
+			custom.SaveAllInfoAsCsv("building_full_export.csv");
+			custom.SaveAllInfoAsJson("building_full_export.json");
+			Console.WriteLine("Exported full info to CSV and JSON.");
+
+			Console.WriteLine("Check 'SecurityLog.txt' for logs of triggered events.");
+			Console.WriteLine("\nPress any key to exit...");
+			Console.ReadKey();
+		}
+	}
+}

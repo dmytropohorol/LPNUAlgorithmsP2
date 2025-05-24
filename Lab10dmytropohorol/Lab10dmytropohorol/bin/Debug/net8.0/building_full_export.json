@@ -1,0 +1,71 @@
+﻿{
+  "FloorsCount": 3,
+  "Floors": [
+    {
+      "FloorNumber": 1,
+      "FloorHeight": 4,
+      "Rooms": [
+        {
+          "Name": "Floor1_Room1",
+          "Width": 12,
+          "Length": 43,
+          "WindowsCount": 3,
+          "DoorsCount": 2,
+          "IsCorridor": false
+        },
+        {
+          "Name": "Floor1_Room2",
+          "Width": 12,
+          "Length": 9,
+          "WindowsCount": 4,
+          "DoorsCount": 1,
+          "IsCorridor": true
+        },
+        {
+          "Name": "Floor1_Room3",
+          "Width": 12,
+          "Length": 9,
+          "WindowsCount": 5,
+          "DoorsCount": 1,
+          "IsCorridor": false
+        }
+      ]
+    },
+    {
+      "FloorNumber": 2,
+      "FloorHeight": 5,
+      "Rooms": [
+        {
+          "Name": "Floor2_Room1",
+          "Width": 12,
+          "Length": 54,
+          "WindowsCount": 10,
+          "DoorsCount": 3,
+          "IsCorridor": true
+        }
+      ]
+    },
+    {
+      "FloorNumber": 3,
+      "FloorHeight": 6,
+      "Rooms": [
+        {
+          "Name": "Floor3_Room1",
+          "Width": 98,
+          "Length": 12,
+          "WindowsCount": 12,
+          "DoorsCount": 3,
+          "IsCorridor": false
+        },
+        {
+          "Name": "Floor3_Room2",
+          "Width": 5,
+          "Length": 8,
+          "WindowsCount": 0,
+          "DoorsCount": 2,
+          "IsCorridor": true
+        }
+      ]
+    }
+  ]
+}
