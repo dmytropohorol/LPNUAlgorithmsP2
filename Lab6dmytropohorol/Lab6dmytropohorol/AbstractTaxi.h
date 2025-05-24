@@ -28,7 +28,7 @@ class AbstractTaxi : public IAutoNumber, public IStringConvertible
 public:
 	virtual ~AbstractTaxi() = default;
 	// A pure virtual function to be overridden by all derived classes
-	virtual void ShowPolymorphic() const = 0;
+	virtual void PrintInfo() const = 0;
 
 	static const int GetCount() { return Count; };
 

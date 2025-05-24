@@ -27,7 +27,9 @@ public:
 	// Orders the driver by address
 	bool Order(int DriverIndex, const char* InAddress);
 
-	void PrintInfo() const;
+	// Polymorphic function required by base class
+	// This overrides the pure virtual method from AbstractTaxi
+	void PrintInfo() const override;
 
 	void InputFromConsole();
 	void PrintToConsole() const;
@@ -44,10 +46,6 @@ public:
 	void SetAddress(int Index, const char* NewAddress);
 	int GetAddressesCount() const { return AddressesCount; }
 	void SetAddressesCount(int NewCount);
-
-	// Polymorphic function required by base class
-	// This overrides the pure virtual method from AbstractTaxi
-	void ShowPolymorphic() const override;
 
 	// Implement IAutoNumber:
 	int GetObjectNumber() const override { return ObjectNumber; }

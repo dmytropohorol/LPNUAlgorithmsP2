@@ -19,9 +19,12 @@ public:
 	}
 
 	// override the abstract method from AbstractTaxi
-	void ShowPolymorphic() const override
+	void PrintInfo() const override
 	{
-		std::cout << "[MiniTaxi::ShowPolymorphic] This is a smaller taxi.\n";
+		std::cout << "Mini taxi:\n"
+			<< "Passenger: " << Passenger
+			<< ", Total Taxi objects: " << Count
+			<< std::endl;
 	}
 };
 

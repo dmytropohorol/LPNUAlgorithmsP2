@@ -18,9 +18,12 @@ public:
 	}
 
 	// Polymorphic function override
-	void ShowPolymorphic() const override
+	void PrintInfo() const override
 	{
-		std::cout << "[LuxTaxi::ShowPolymorphic] This is a luxury taxi.\n";
+		std::cout << "Lux taxi:\n"
+			<< "Passenger: " << Passenger
+			<< ", Total Taxi objects: " << Count
+			<< std::endl;
 	}
 
 	// Lets show how to access 'Addresses' (protected in Taxi)

@@ -29,7 +29,7 @@ int main()
 	MiniTaxi mt("Bob", sampleDrivers, 3, sampleAddresses, 2);
 	LuxTaxi  lt("Charlie", sampleDrivers, 3, sampleAddresses, 2);
 
-	// C) Polymorphism: store them in AbstractTaxi* array, call ShowPolymorphic()
+	// C) Polymorphism: store them in AbstractTaxi* array, call PrintInfo()
 	//    Also, they are IAutoNumber => so can store them in an array to sort by ID
 	AbstractTaxi* absArr[3];
 	absArr[0] = &t1;  // a Taxi
@@ -38,7 +38,7 @@ int main()
 
 	std::cout << "\n--- Polymorphic ShowPolymorphic() ---\n";
 	for (AbstractTaxi* ptr : absArr)
-		ptr->ShowPolymorphic();
+		ptr->PrintInfo();
 
 	// D) Show IAutoNumber usage => each has a unique ID, we can sort them
 	IAutoNumber* numArr[3];

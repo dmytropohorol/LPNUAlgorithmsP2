@@ -170,11 +170,6 @@ void Taxi::SetAddress(int Index, const char* NewAddress)
 	Addresses[Index][MAX_STR_LEN - 1] = '\0';
 }
 
-void Taxi::ShowPolymorphic() const
-{
-	std::cout << "[Taxi::ShowPolymorphic] This is a standard taxi.\n";
-}
-
 int Taxi::Order()
 {
 	if (!Drivers) return 0;
@@ -229,11 +224,10 @@ bool Taxi::Order(int DriverIndex, const char* InAddress)
 
 void Taxi::PrintInfo() const
 {
-	std::cout << " Passenger: " << Passenger
-		<< ", DriversCount: " << DriversCount
-		<< ", AddressesCount: " << AddressesCount
+	std::cout << "Standart taxi:\n" 
+		<< "Passenger: " << Passenger
 		<< ", Total Taxi objects: " << Count
-		<< "\n";
+		<< std::endl;
 }
 
 void Taxi::InputFromConsole()
